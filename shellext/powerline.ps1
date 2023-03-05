@@ -129,7 +129,7 @@ function Get-TimetrackerInfo {
 
 function Get-UserAndHost {
     if ($PSVersionTable.Platform -eq "Unix") {
-        return "${env:USER}@$(hostname)"
+        return "${env:USER}@$(hostname -s)"
     }
     return "${env:USERNAME}@${env:COMPUTERNAME}"
 }
