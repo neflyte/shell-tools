@@ -22,6 +22,9 @@ if (Test-Path $env:TOOLS_FUNCTIONS_PATH) {
     }
 }
 #
+# Modules
+Import-Module "${env:TOOLS_HOME}/modules/GitFunctions/GitFunctions.psm1"
+#
 # Aliases
 if (-not(Test-Path env:TOOLS_ALIASES_FILE)) {
     $env:TOOLS_ALIASES_FILE = "aliases.ps1"
