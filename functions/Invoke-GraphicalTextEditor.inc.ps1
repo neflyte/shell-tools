@@ -1,5 +1,5 @@
 function Invoke-GraphicalTextEditor {
-    $editor = "notepad"
+    $editor = "notepad.exe"
     if ($PSVersionTable.Platform -eq "Unix") {
         $editor = "gvim"
     }

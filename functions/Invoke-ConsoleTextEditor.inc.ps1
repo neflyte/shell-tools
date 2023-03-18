@@ -1,5 +1,5 @@
 function Invoke-ConsoleTextEditor {
-    $editor = "notepad"
+    $editor = "notepad.exe"
     if ($PSVersionTable.Platform -eq "Unix") {
         $editor = "vim"
     }
