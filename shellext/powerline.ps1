@@ -165,5 +165,5 @@ function prompt {
     }
 
     # return the new prompt string
-    "${COLOR_RESET}${lineone}${userhost} ${cwd} ${symbol} ${COLOR_TEXT}"
+    "${COLOR_RESET}${lineone}${userhost} ${cwd} ${symbol} ${COLOR_RESET}"
 }
