@@ -21,7 +21,7 @@ function Get-PowerlineSymbol {
         if ($env:EUID -eq "0") {
             return "#"
         }
-        if ($PSVersionTable.OS -Contains "Darwin") {
+        if ($PSVersionTable.OS -like "Darwin*") {
             return $SYMBOL_POWERLINE_DARWIN
         }
         return "$"
