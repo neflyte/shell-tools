@@ -6,5 +6,5 @@ function Invoke-GraphicalTextEditor {
     if ($env:VISUAL -ne "") {
         $editor = $env:VISUAL
     }
-    . "${editor}" $args
+    Start-Process $editor -ArgumentList @($args) -NoNewWindow
 }

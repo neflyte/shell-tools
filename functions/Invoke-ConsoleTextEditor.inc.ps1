@@ -6,5 +6,5 @@ function Invoke-ConsoleTextEditor {
     if ($env:EDITOR -ne "") {
         $editor = $env:EDITOR
     }
-    . "${editor}" $args
+    & "${editor}" $args
 }
