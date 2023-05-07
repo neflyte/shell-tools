@@ -38,10 +38,10 @@ alias jt="npx jest --clearCache && npx jest -i"
 alias ni="npm i"
 alias nci="npm ci"
 #
-# Youtube-DL
-alias ytdl-dump="youtube-dl --no-playlist --embed-thumbnail --write-thumbnail --all-formats --add-metadata --no-overwrites -o '%(id)s_%(format)s.%(ext)s'"
-alias yta="youtube-dl --embed-thumbnail --format 'bestaudio[ext=wav]/bestaudio[ext=m4a]/bestaudio[ext=mp4]/bestaudio[ext=mp3]/bestaudio' -o '%(title)s.%(ext)s'"
-alias ytv="youtube-dl --format 'bestvideo+bestaudio/best' -o '%(title)s.%(ext)s'"
+# yt-dlp
+alias ytdump="yt-dlp --no-playlist --embed-thumbnail --write-thumbnail --all-formats --add-metadata --no-overwrites -o '%(id)s_%(format)s.%(ext)s'"
+alias yta="yt-dlp --embed-thumbnail --format 'bestaudio[ext=wav]/bestaudio[ext=m4a]/bestaudio[ext=mp4]/bestaudio[ext=mp3]/bestaudio' -o '%(title)s.%(ext)s'"
+alias ytv="yt-dlp --format 'bestvideo+bestaudio/best' -o '%(title)s.%(ext)s'"
 #
 # Wine
 alias w32="export WINEARCH=win32 && export WINEPREFIX=\${HOME}/.wine32"
@@ -53,7 +53,7 @@ alias cdwine="cd \${WINEPREFIX}/drive_c"
 alias e="${EDITOR:-vi}"
 # shellcheck disable=SC2139
 alias g="${VISUAL:-vi}"
-alias z="7z a -t7z -mx -m0=LZMA2"  # 7-zip with high compression
+alias z="7z a -mx9"  # 7-zip with high compression
 alias t="tmux attach || tmux"  # tmux: attach to existing session or start a new one
 case ${OSTYPE} in
   linux*|freebsd*)
