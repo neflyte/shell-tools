@@ -38,3 +38,19 @@ Function Update-GitOriginRepo {
 Function Update-GitRepo {
     git pull $args
 }
+
+function Test-GitRepo {
+    [OutputType([Boolean])]
+    param(
+        [String]$Directory = $PWD
+    )
+    $repoDir = Find-DirectoryFromParent -Start $Directory -Directory ".git" -ErrorAction SilentlyContinue -ErrorVariable repoError
+    if ($repoError) {
+        $repoError | ForEach-Object { Write-Error $_ }
+        return $false
+    }
+    if ($null -eq $repoDir) {
+        return $false
+    }
+    return $true
+}

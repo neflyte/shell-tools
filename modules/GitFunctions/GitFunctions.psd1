@@ -9,6 +9,7 @@
         'Get-GitTags',
         'Reset-GitBranch',
         'Set-GitBranch',
+        'Test-GitRepo',
         'Update-GitOriginRepo',
         'Update-GitRepo'
     )

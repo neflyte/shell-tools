@@ -17,57 +17,57 @@ $COLOR_TEXT = $PSStyle.Foreground.White
 $COLOR_RESET = $PSStyle.Reset
 
 function Get-PowerlineSymbol {
-    if ($PSVersionTable.Platform -eq "Unix") {
-        if ($env:EUID -eq "0") {
-            return "#"
+    if ($PSVersionTable.Platform -eq 'Unix') {
+        if ($env:EUID -eq '0') {
+            return '#'
         }
-        if ($PSVersionTable.OS -like "Darwin*") {
+        if ($PSVersionTable.OS -like 'Darwin*') {
             return $SYMBOL_POWERLINE_DARWIN
         }
-        return "$"
+        return '$'
     }
     $identity = [Security.Principal.WindowsIdentity]::GetCurrent()
     $principal = [Security.Principal.WindowsPrincipal] $identity
     $adminRole = [Security.Principal.WindowsBuiltInRole]::Administrator
-    $symbol = ">"
+    $symbol = '>'
     if ($principal.IsInRole($adminRole)) {
-        $symbol = "#"
+        $symbol = '#'
     }
     return $symbol
 }
 
 function Get-GitInfo {
     if ($POWERLINE_GIT -ne 1) {
-        return "" # disabled
+        return '' # disabled
     }
     if ($null -eq $(Find-DirectoryFromParent -Directory .git)) {
-        return "" # no git repo in this directory
+        return '' # no git repo in this directory
     }
     $null = Get-Command -ErrorVariable hasGitErr -ErrorAction SilentlyContinue git
     if ($hasGitErr) {
-        return "" # git not found
+        return '' # git not found
     }
     # get current branch name
     $ref = git symbolic-ref --short HEAD 2>$null
-    if ($? -and $ref -ne "") {
+    if ($? -and $ref -ne '') {
         # prepend branch symbol
         $ref = $SYMBOL_GIT_BRANCH + $ref
     } else {
         # get tag name or short unique hash
         $ref = git describe --tags --always 2>$null
     }
-    if ($ref -eq "") {
-        return "" # not a git repo
+    if ($ref -eq '') {
+        return '' # not a git repo
     }
-    $marks = ""
+    $marks = ''
     $git_status = git status --porcelain --branch 2>$null
     # scan first two lines of output from `git status`
     foreach ($line in $git_status) {
-        if ($line -match "^##") {
-            if ($line -match "ahead ([0-9]+)") {
+        if ($line -match '^##') {
+            if ($line -match 'ahead ([0-9]+)') {
                 $marks += " ${SYMBOL_GIT_PUSH}" # + match...
             }
-            if ($line -match "behind ([0-9]+)") {
+            if ($line -match 'behind ([0-9]+)') {
                 $marks += " ${SYMBOL_GIT_PULL}" # + match...
             }
         } else { # branch is modified if output contains more lines after the header line
@@ -80,32 +80,32 @@ function Get-GitInfo {
 
 function Get-SvnInfo {
     if ($POWERLINE_SVN -ne 1) {
-        return "" # disabled
+        return '' # disabled
     }
     if ($null -eq $(Find-DirectoryFromParent -Directory .svn)) {
-        return "" # no git repo in this directory
+        return '' # no git repo in this directory
     }
     $null = Get-Command -ErrorVariable hasSvnErr -ErrorAction SilentlyContinue svn
     if ($hasSvnErr) {
-        return "" # svn not found
+        return '' # svn not found
     }
-    $svn_info = ""
+    $svn_info = ''
     $relative_url = svn info --show-item relative-url 2>$null
-    if ($? -and $relative_url -ne "") {
+    if ($? -and $relative_url -ne '') {
         $svn_info += $relative_url
         $rev = svn info --show-item revision 2>$null
-        if ($? -and $rev -ne "") {
+        if ($? -and $rev -ne '') {
             $svn_info += "@${rev}"
         }
         # look for changes
         $change_ctr = 0
         $svn_status = svn status -q 2>$null
-        foreach ($line in $svn_status) {
-            $trimmed = $line.Trim()
+        $svn_status | ForEach-Object {
+            $trimmed = $_.Trim()
             if ($trimmed.Length -eq 0) {
                 continue
             }
-            if ($trimmed[0] -in "A", "C", "D", "M", "R") {
+            if ($trimmed[0] -in 'A', 'C', 'D', 'M', 'R') {
                 $change_ctr++
             }
         }
@@ -118,17 +118,17 @@ function Get-SvnInfo {
 
 function Get-TimetrackerInfo {
     if ($POWERLINE_TT -ne 1) {
-        return "" # disabled
+        return '' # disabled
     }
     $null = Get-Command -ErrorVariable hasTTErr -ErrorAction SilentlyContinue timetracker
     if ($hasTTErr) {
-        return "" # timetracker not found
+        return '' # timetracker not found
     }
     return $(timetracker s -s 2>$null)
 }
 
 function Get-UserAndHost {
-    if ($PSVersionTable.Platform -eq "Unix") {
+    if ($PSVersionTable.Platform -eq 'Unix') {
         return "${env:USER}@$(hostname -s)"
     }
     return "${env:USERNAME}@${env:COMPUTERNAME}"
@@ -150,17 +150,17 @@ function prompt {
     $cwd = "${COLOR_CWD}$(Get-Location)${COLOR_RESET}"
     $userhost = "${COLOR_USERHOST}$(Get-UserAndHost)${COLOR_RESET}"
 
-    $lineone = ""
-    if ($ttstatus -ne "") {
+    $lineone = ''
+    if ($ttstatus -ne '') {
         $lineone += "${COLOR_TEXT}T:${ttstatus}${COLOR_RESET} "
     }
-    if ($git -ne "") {
+    if ($git -ne '') {
         $lineone += "${COLOR_GIT}G:${git}${COLOR_RESET} "
     }
-    if ($svn -ne "") {
+    if ($svn -ne '') {
         $lineone += "${COLOR_SVN}S:${svn}${COLOR_RESET} "
     }
-    if ($lineone -ne "") {
+    if ($lineone -ne '') {
         $lineone += "`n"
     }
 

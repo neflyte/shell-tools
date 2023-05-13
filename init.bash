@@ -25,7 +25,7 @@ export TOOLS_HOME="${1}"
 [ -z "${TOOLS_SCRIPTS_PATH}" ] && readonly TOOLS_SCRIPTS_PATH="${TOOLS_HOME}/scripts"
 [ -d "${TOOLS_SCRIPTS_PATH}" ] && {
   for SCRIPT in "${TOOLS_SCRIPTS_PATH}"/*.bash; do
-    SCRIPT_NAME="$(basename "${SCRIPT}")"
+    SCRIPT_NAME="$(base_name "${SCRIPT}")"
     # shellcheck disable=SC2139
     builtin alias "${SCRIPT_NAME/.bash/}"="${SCRIPT}"
   done

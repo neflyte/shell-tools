@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 #
-# basename.inc.bash -- Pure-Bash version of basename
+# base_name.inc.bash -- Pure-Bash version of basename
 #
-basename() {
-    # Usage: basename "path" ["suffix"]
+base_name() {
+    # Usage: base_name "path" ["suffix"]
     local tmp
     local firstarg="${1}"
     local secarg="${2:-}"
