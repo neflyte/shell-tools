@@ -40,11 +40,11 @@ function Get-GitInfo {
     if ($POWERLINE_GIT -ne 1) {
         return "" # disabled
     }
-    if (-not(Test-Path .git)) {
+    if ($null -eq $(Find-DirectoryFromParent -Directory .git)) {
         return "" # no git repo in this directory
     }
     $null = Get-Command -ErrorVariable hasGitErr -ErrorAction SilentlyContinue git
-    if ($hasGitErr -ne "") {
+    if ($hasGitErr) {
         return "" # git not found
     }
     # get current branch name
@@ -82,11 +82,11 @@ function Get-SvnInfo {
     if ($POWERLINE_SVN -ne 1) {
         return "" # disabled
     }
-    if (-not(Test-Path .svn)) {
-        return "" # no svn repo in this directory
+    if ($null -eq $(Find-DirectoryFromParent -Directory .svn)) {
+        return "" # no git repo in this directory
     }
     $null = Get-Command -ErrorVariable hasSvnErr -ErrorAction SilentlyContinue svn
-    if ($hasSvnErr -ne "") {
+    if ($hasSvnErr) {
         return "" # svn not found
     }
     $svn_info = ""
@@ -121,7 +121,7 @@ function Get-TimetrackerInfo {
         return "" # disabled
     }
     $null = Get-Command -ErrorVariable hasTTErr -ErrorAction SilentlyContinue timetracker
-    if ($hasTTErr -ne "") {
+    if ($hasTTErr) {
         return "" # timetracker not found
     }
     return $(timetracker s -s 2>$null)
