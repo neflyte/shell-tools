@@ -5,10 +5,12 @@
 basename() {
     # Usage: basename "path" ["suffix"]
     local tmp
+    local firstarg="${1}"
+    local secarg="${2:-}"
 
-    tmp=${1%"${1##*[!/]}"}
+    tmp=${firstarg%"${firstarg##*[!/]}"}
     tmp=${tmp##*/}
-    tmp=${tmp%"${2/"$tmp"}"}
+    tmp=${tmp%"${secarg/"$tmp"}"}
 
     printf '%s\n' "${tmp:-/}"
 }

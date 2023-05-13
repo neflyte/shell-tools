@@ -50,6 +50,7 @@ __powerline() {
     if [[ ${POWERLINE_GIT} -eq 0 ]]; then
       return # disabled
     fi
+    directoryinparent ".git" || return   # no .git directory in parent hierarchy
     hash git 2>/dev/null || return       # git not found
     local git_eng="env LANG=C git"       # force git output in English to make our work easier
     local ref
@@ -90,6 +91,7 @@ __powerline() {
     if [[ ${POWERLINE_SVN} -eq 0 ]]; then
       return # disabled
     fi
+    directoryinparent ".svn" || return   # no .svn directory in parent hierarchy
     hash svn 2>/dev/null || return       # svn not found
     local svn_eng="env LANG=C svn"       # force svn output in English to make our work easier
     local svn_info
