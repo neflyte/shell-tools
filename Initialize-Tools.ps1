@@ -26,6 +26,7 @@ if (Test-Path $env:TOOLS_FUNCTIONS_PATH) {
 #
 # Modules
 Import-Module "${env:TOOLS_HOME}/modules/GitFunctions" -Scope Global -Force
+Import-Module "${env:TOOLS_HOME}/modules/UtilityFunctions" -Scope Global -Force
 #
 # Aliases
 if ($null -eq $env:TOOLS_ALIASES_FILE -or -not(Test-Path $env:TOOLS_ALIASES_FILE)) {
