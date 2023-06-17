@@ -164,6 +164,15 @@ function prompt {
         $lineone += "`n"
     }
 
+    # If we're on Unix, macOS excepted, prepend a "PS" string to the last prompt line so
+    # we know we're in PowerShell; the prompt symbol will be the same in those cases.
+    $psPrefix = ''
+    if ($PSVersionTable.Platform -eq 'Unix') {
+        if (-not($PSVersionTable.OS -like 'Darwin*')) {
+            $psPrefix = 'PS '
+        }
+    }
+
     # return the new prompt string
-    "${COLOR_RESET}${lineone}${userhost} ${cwd} ${symbol} ${COLOR_RESET}"
+    "${COLOR_RESET}${lineone}${psPrefix}${userhost} ${cwd} ${symbol} ${COLOR_RESET}"
 }
