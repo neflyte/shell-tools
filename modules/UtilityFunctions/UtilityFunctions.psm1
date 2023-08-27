@@ -115,13 +115,22 @@ function Get-LastWeekTimesheet {
         $endOfLastWeek = $calendar.AddDays($lastWeek, 6 - $dayOfLastWeek)
     }
     $tempOutput = New-TemporaryFile
-    $startDate = $startOfLastWeek.ToString("yyyy-MM-dd")
-    $endDate = $endOfLastWeek.ToString("yyyy-MM-dd")
-    Write-Debug "timetracker timesheet report --logLevel warning --startDate ${startDate} --endDate ${endDate} --exportCSV $($tempOutput.FullName)"
-    timetracker timesheet report --logLevel warning --startDate $startDate --endDate $endDate --exportCSV $($tempOutput.FullName)
-    $report = Get-Content $tempOutput | ConvertFrom-Csv
-    $tempOutput.Delete()
-    return $report
+    try {
+        $startDate = $startOfLastWeek.ToString("yyyy-MM-dd")
+        $endDate = $endOfLastWeek.ToString("yyyy-MM-dd")
+        $ttArgs = @(
+            '--logLevel warning',
+            "--startDate $startDate",
+            "--endDate $endDate",
+            "--exportCSV $($tempOutput.FullName)"
+        )
+        Write-Debug "timetracker timesheet report ${ttArgs}"
+        timetracker timesheet report $ttArgs
+        $report = Get-Content $tempOutput | ConvertFrom-Csv
+        return $report
+    } finally {
+        $tempOutput.Delete()
+    }
 }
 
 Function Update-SvnRepo {
