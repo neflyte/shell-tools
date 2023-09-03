@@ -7,7 +7,7 @@ using namespace System.IO
     The path to the tools directory
 #>
 param(
-    [Parameter(Mandatory=$true)][String]$HomePath
+    [Parameter(Mandatory)][String]$HomePath
 )
 if (-not(Test-Path $HomePath)) {
     Write-Error 'invalid directory specified'
@@ -29,8 +29,7 @@ if (Test-Path $env:TOOLS_FUNCTIONS_PATH) {
 # Modules
 $modulesPath = Join-Path $env:TOOLS_HOME 'modules'
 $env:PSModulePath = $modulesPath + [Path]::PathSeparator + $env:PSModulePath
-Import-Module GitFunctions -Force
-Import-Module UtilityFunctions -Force
+Import-Module ShellTools -Force
 #
 # Aliases
 if ($null -eq $env:TOOLS_ALIASES_FILE -or -not(Test-Path $env:TOOLS_ALIASES_FILE)) {
