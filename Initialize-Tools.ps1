@@ -9,7 +9,7 @@ using namespace System.IO
 param(
     [Parameter(Mandatory)][String]$HomePath
 )
-if (-not(Test-Path $HomePath)) {
+if ($HomePath -eq '' -or -not(Test-Path $HomePath)) {
     Write-Error 'invalid directory specified'
     exit 1
 }
@@ -28,7 +28,10 @@ if (Test-Path $env:TOOLS_FUNCTIONS_PATH) {
 #
 # Modules
 $modulesPath = Join-Path $env:TOOLS_HOME 'modules'
-$env:PSModulePath = $modulesPath + [Path]::PathSeparator + $env:PSModulePath
+if ($env:PSModulePath -ne '') {
+    $modulesPath += [Path]::PathSeparator + $env:PSModulePath
+}
+$env:PSModulePath = $modulesPath
 Import-Module ShellTools -Force
 #
 # Aliases

@@ -28,18 +28,15 @@ function Find-DirectoryFromParent {
             if ($getItemError) {
                 Write-Error -ErrorRecord $getItemError
                 return $null
-                exit 1
             }
             if ($null -ne $desiredDir) {
                 Write-Debug "found directory at $($desiredDir.FullName)"
                 return $desiredDir
-                exit 0
             }
             $currentDir = $currentDir.Parent
         }
         Write-Error "could not find directory ${Directory} in parent path hierarchy from ${Start}"
         return $null
-        exit 1
     } finally {
         Set-Location $startingDir
     }
@@ -53,13 +50,13 @@ function Remove-DirectoryWithRecurseForce {
     )
     $directoryLocation = Get-Item -Path $Directory -ErrorAction SilentlyContinue -ErrorVariable locationError
     if ($locationError) {
-        Write-Error "invalid directory ${Directory}: ${locationError}"
-        return
+        throw "invalid directory ${Directory}: ${locationError}"
     }
-    Write-Debug "directory: $($directoryLocation.FullName)"
-    if ($PSCmdlet.ShouldProcess($directoryLocation.FullName)) {
-        $directoryLocation | Remove-Item -Recurse -Force
-        Write-Debug "removed directory $($directoryLocation.FullName)"
+    $directoryLoc = $directoryLocation.FullName
+    Write-Debug "directory: ${directoryLoc}"
+    if ($PSCmdlet.ShouldProcess($directoryLoc)) {
+        Remove-Item -Path $directoryLoc -Recurse -Force
+        Write-Debug "removed directory ${directoryLoc}"
     }
 }
 
@@ -68,22 +65,22 @@ Function Get-ChildItemWide {
 }
 
 function Invoke-ConsoleTextEditor {
-    $editor = "notepad.exe"
-    if ($PSVersionTable.Platform -eq "Unix") {
-        $editor = "vim"
+    $editor = 'notepad.exe'
+    if ($PSVersionTable.Platform -eq 'Unix') {
+        $editor = 'vim'
     }
-    if ($env:EDITOR -ne "") {
+    if ($null -ne $env:EDITOR) {
         $editor = $env:EDITOR
     }
-    & "${editor}" $args
+    & $editor $args
 }
 
 function Invoke-GraphicalTextEditor {
-    $editor = "notepad.exe"
-    if ($PSVersionTable.Platform -eq "Unix") {
-        $editor = "gvim"
+    $editor = 'notepad.exe'
+    if ($PSVersionTable.Platform -eq 'Unix') {
+        $editor = 'gvim'
     }
-    if ($env:VISUAL -ne "") {
+    if ($null -ne $env:VISUAL) {
         $editor = $env:VISUAL
     }
     Start-Process $editor -ArgumentList @($args) -NoNewWindow
@@ -101,6 +98,14 @@ function Invoke-Timetracker {
     timetracker $args
 }
 
+Function Invoke-NuGet {
+    if ($PSVersionTable.OS -like 'Linux*') {
+        mono $(Join-Path $HOME 'bin' 'nuget.exe') $args
+    } else {
+        nuget $args
+    }
+}
+
 function Get-LastWeekTimesheet {
     $calendar = (Get-Culture).Calendar
     $today = Get-Date
@@ -116,8 +121,8 @@ function Get-LastWeekTimesheet {
     }
     $tempOutput = New-TemporaryFile
     try {
-        $startDate = $startOfLastWeek.ToString("yyyy-MM-dd")
-        $endDate = $endOfLastWeek.ToString("yyyy-MM-dd")
+        $startDate = $startOfLastWeek.ToString('yyyy-MM-dd')
+        $endDate = $endOfLastWeek.ToString('yyyy-MM-dd')
         $ttArgs = @(
             '--logLevel warning',
             "--startDate $startDate",

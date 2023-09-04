@@ -50,6 +50,8 @@ alias cdwine="cd \${WINEPREFIX}/drive_c"
 #
 # Misc
 # shellcheck disable=SC2139
+alias nuget="mono ${HOME}/bin/nuget.exe"
+# shellcheck disable=SC2139
 alias e="${EDITOR:-vi}"
 # shellcheck disable=SC2139
 alias g="${VISUAL:-vi}"

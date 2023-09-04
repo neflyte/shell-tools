@@ -27,6 +27,7 @@
         'Invoke-Docker',
         'Invoke-DockerCompose',
         'Invoke-Timetracker',
+        'Invoke-NuGet',
         'Remove-DirectoryWithRecurseForce',
         'Update-SvnRepo'
     )

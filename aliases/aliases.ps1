@@ -1,9 +1,9 @@
 #
 # aliases.ps1 -- Command Aliases
 #
-# Subversion
+<# Subversion #>
 Set-Alias sup Update-SvnRepo
-# Git
+<# Git #>
 Remove-Alias gp -Force -ErrorAction SilentlyContinue
 Set-Alias gp Update-GitRepo
 Set-Alias gfo Update-GitOriginRepo
@@ -13,16 +13,17 @@ Set-Alias gt Get-GitTags
 Set-Alias gbr Get-GitBranch
 Set-Alias gco Set-GitBranch
 Set-Alias grs Reset-GitBranch
-# Shell commands
+<# Shell commands #>
 Set-Alias ll Get-ChildItem
 Remove-Alias ls -Force -ErrorAction SilentlyContinue
 Set-Alias ls Get-ChildItemWide
 Set-Alias which Get-Command
 Set-Alias rimraf Remove-DirectoryWithRecurseForce
-# File editing
+<# File editing #>
 Set-Alias g Invoke-GraphicalTextEditor
 Set-Alias e Invoke-ConsoleTextEditor
-# Other tools
+<# Other tools #>
 Set-Alias tt Invoke-Timetracker
 Set-Alias dkr Invoke-Docker
 Set-Alias dkc Invoke-DockerCompose
+Set-Alias ng Invoke-NuGet
