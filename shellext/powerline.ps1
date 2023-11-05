@@ -120,11 +120,16 @@ function Get-TimetrackerInfo {
     if ($POWERLINE_TT -ne 1) {
         return '' # disabled
     }
-    $null = Get-Command -ErrorVariable hasTTErr -ErrorAction SilentlyContinue timetracker
+    $ttExec = 'timetracker'
+    if ($PSVersionTable.Platform -eq 'Windows') {
+        $ttExec += '.exe'
+    }
+    $null = Get-Command $ttExec -ErrorVariable hasTTErr -ErrorAction SilentlyContinue
     if ($hasTTErr) {
         return '' # timetracker not found
     }
-    return $(timetracker s -s 2>$null)
+    $out = & $ttExec s -s 2>$null
+    return $out
 }
 
 function Get-UserAndHost {
