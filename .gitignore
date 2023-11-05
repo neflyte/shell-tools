@@ -2,3 +2,6 @@
 #
 # JetBrains preferences
 .idea/
+# libgit2 libraries
+git2-*
+LibGit2Sharp.*
