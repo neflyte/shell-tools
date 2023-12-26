@@ -27,3 +27,4 @@ Set-Alias tt Invoke-Timetracker
 Set-Alias dkr Invoke-Docker
 Set-Alias dkc Invoke-DockerCompose
 Set-Alias ng Invoke-NuGet
+Set-Alias ib Invoke-Build
