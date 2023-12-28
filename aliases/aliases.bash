@@ -55,13 +55,13 @@ alias e="\${EDITOR:-vi}"
 alias g="\${VISUAL:-vim}"
 alias z="7z a -mx9"  # 7-zip with high compression
 alias t="tmux attach || tmux"  # tmux: attach to existing session or start a new one
+alias nuget="mono \${HOME}/bin/nuget.exe"
 #
 # OS-specific aliases
 case ${OSTYPE} in
   linux*|freebsd*)
     alias ls="ls -aFh --color=auto"
     alias ll="ls -aFhl --color=auto"
-    alias nuget="mono \${HOME}/bin/nuget.exe"
     ;;
   darwin*)
     alias ls="ls -aFGh"
