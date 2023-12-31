@@ -11,6 +11,7 @@ POWERLINE_TT=1     # timetracker status
 __powerline() {
   # Colorscheme
   readonly RESET='\[\033[m\]'
+  readonly COLOR_GREEN='\[\033[0;32m\]'     # green
   readonly COLOR_CWD='\[\033[0;94m\]'         # blue
   readonly COLOR_GIT='\[\033[0;36m\]'         # cyan
   readonly COLOR_SVN='\[\033[0;35m\]'         # magenta
@@ -268,6 +269,9 @@ __powerline() {
     local userhost="${COLOR_BRIGHTBLACK}\u@\h${RESET}"
 
     local lineone
+    if [[ -n "${VIRTUAL_ENV_PROMPT}" ]]; then
+      lineone+="${COLOR_GREEN}${VIRTUAL_ENV_PROMPT}${RESET}"
+    fi
     if [[ -n "${ttstatus}" ]]; then
       lineone+="T:${ttstatus} "
     fi
