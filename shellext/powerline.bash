@@ -47,6 +47,20 @@ __powerline() {
     fi
   fi
 
+  __trim_string() {
+    # https://github.com/dylanaraps/pure-bash-bible#trim-leading-and-trailing-white-space-from-string
+    # Usage: __trim_string "   example   string    "
+    : "${1#"${1%%[![:space:]]*}"}"
+    # [![:space:]]* 				-> string from the first non-space charactor to the end
+    # "${1%%[![:space:]]*}" 		-> greedly remove above string from the end, remaining is space prefix
+    # "${1#"${1%%[![:space:]]*}"}"	-> remove space prefix from the start
+    : "${_%"${_##*[![:space:]]}"}"
+    # *[![:space:]] 				-> string from start to the a non-space charactor, 'matrix is nice'
+    # ${_##*[![:space:]]}			-> greedly remove above string from the start, remove 'matrix is nice' from the start, remaining is space suffix
+    # "${_%"${_##*[![:space:]]}"}"	-> remove space suffix from the end
+    printf '%s\n' "$_"
+  }
+
   __git_info() {
     if [[ ${POWERLINE_GIT} -eq 0 ]]; then
       return # disabled
@@ -270,7 +284,7 @@ __powerline() {
 
     local lineone
     if [[ -n "${VIRTUAL_ENV_PROMPT}" ]]; then
-      lineone+="${COLOR_GREEN}${VIRTUAL_ENV_PROMPT}${RESET}"
+      lineone+="${COLOR_GREEN}$(__trim_string "${VIRTUAL_ENV_PROMPT}")${RESET} "
     fi
     if [[ -n "${ttstatus}" ]]; then
       lineone+="T:${ttstatus} "
