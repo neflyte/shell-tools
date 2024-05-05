@@ -169,13 +169,11 @@ function prompt {
         $lineone += "`n"
     }
 
-    # If we're on Unix, macOS excepted, prepend a "PS" string to the last prompt line so
+    # If we're on Unix prepend a "PS" string to the last prompt line so
     # we know we're in PowerShell; the prompt symbol will be the same in those cases.
     $psPrefix = ''
     if ($PSVersionTable.Platform -eq 'Unix') {
-        if (-not($PSVersionTable.OS -like 'Darwin*')) {
-            $psPrefix = 'PS '
-        }
+        $psPrefix = 'PS '
     }
 
     # return the new prompt string
