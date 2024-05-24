@@ -14,7 +14,7 @@ alias sco="svn co"
 alias si="svn info"
 alias scl="svn cleanup"
 alias sup="svn update"
-alias ss="svn status"
+alias sst="svn status"
 #
 # Kubernetes
 alias kc="kubectl"
