@@ -17,6 +17,8 @@ $COLOR_TEXT = $PSStyle.Foreground.White
 $COLOR_RESET = $PSStyle.Reset
 
 function Get-PowerlineSymbol {
+    [OutputType([string])]
+    param()
     if ($PSVersionTable.Platform -eq 'Unix') {
         if ($env:EUID -eq '0') {
             return '#'
@@ -37,6 +39,8 @@ function Get-PowerlineSymbol {
 }
 
 function Get-GitInfo {
+    [OutputType([string])]
+    param()
     if ($POWERLINE_GIT -ne 1) {
         return '' # disabled
     }
@@ -79,6 +83,8 @@ function Get-GitInfo {
 }
 
 function Get-SvnInfo {
+    [OutputType([string])]
+    param()
     if ($POWERLINE_SVN -ne 1) {
         return '' # disabled
     }
@@ -117,6 +123,8 @@ function Get-SvnInfo {
 }
 
 function Get-TimetrackerInfo {
+    [OutputType([string])]
+    param()
     if ($POWERLINE_TT -ne 1) {
         return '' # disabled
     }
@@ -133,6 +141,8 @@ function Get-TimetrackerInfo {
 }
 
 function Get-UserAndHost {
+    [OutputType([string])]
+    param()
     if ($PSVersionTable.Platform -eq 'Unix') {
         return "${env:USER}@$(hostname -s)"
     }
@@ -177,5 +187,6 @@ function prompt {
     }
 
     # return the new prompt string
-    "${COLOR_RESET}${lineone}${psPrefix}${userhost} ${cwd} ${symbol} ${COLOR_RESET}"
+    Write-Host -NoNewLine "${COLOR_RESET}${lineone}${psPrefix}${userhost} ${cwd}"
+    return " ${symbol} "
 }

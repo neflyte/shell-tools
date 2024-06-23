@@ -1,5 +1,3 @@
-using namespace System.IO
-
 <#
 .SYNOPSIS
     Initialize the tools system
@@ -7,7 +5,7 @@ using namespace System.IO
     The path to the tools directory
 #>
 param(
-    [Parameter(Mandatory)][String]$HomePath
+    [Parameter(Mandatory,Position=0)][String]$HomePath
 )
 if ($HomePath -eq '' -or -not(Test-Path $HomePath)) {
     Write-Error 'invalid directory specified'
@@ -29,7 +27,7 @@ if (Test-Path $env:TOOLS_FUNCTIONS_PATH) {
 # Modules
 $modulesPath = Join-Path $env:TOOLS_HOME 'modules'
 if ($env:PSModulePath -ne '') {
-    $modulesPath += [Path]::PathSeparator + $env:PSModulePath
+    $modulesPath += [System.IO.Path]::PathSeparator + $env:PSModulePath
 }
 $env:PSModulePath = $modulesPath
 Import-Module ShellTools -Force
@@ -39,8 +37,8 @@ if ($null -eq $env:TOOLS_ALIASES_FILE -or -not(Test-Path $env:TOOLS_ALIASES_FILE
     $env:TOOLS_ALIASES_FILE = 'aliases.ps1'
 }
 if ($null -eq $env:TOOLS_ALIASES_PATH -or -not(Test-Path $env:TOOLS_ALIASES_PATH)) {
-    $env:TOOLS_ALIASES_PATH = Join-Path $env:TOOLS_HOME 'aliases' $env:TOOLS_ALIASES_FILE
+    $env:TOOLS_ALIASES_PATH = Join-Path (Join-Path $env:TOOLS_HOME 'aliases') $env:TOOLS_ALIASES_FILE
 }
 if (Test-Path -PathType Leaf $env:TOOLS_ALIASES_PATH) {
-    . $env:TOOLS_ALIASES_PATH
+    . "${env:TOOLS_ALIASES_PATH}"
 }
