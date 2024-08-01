@@ -141,3 +141,11 @@ function Get-LastWeekTimesheet {
 Function Update-SvnRepo {
     svn update
 }
+
+function New-DirectoryAndSetLocation {
+    param(
+        [Parameter(Mandatory,Position=0)][string]$Path
+    )
+    $null = New-Item $Path -Type Directory -Force
+    Set-Location $Path
+}

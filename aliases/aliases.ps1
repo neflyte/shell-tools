@@ -19,6 +19,7 @@ Remove-Alias ls -Force -ErrorAction SilentlyContinue
 Set-Alias ls Get-ChildItemWide
 Set-Alias which Get-Command
 Set-Alias rimraf Remove-DirectoryWithRecurseForce
+Set-Alias mdcd New-DirectoryAndSetLocation
 <# File editing #>
 Set-Alias g Invoke-GraphicalTextEditor
 Set-Alias e Invoke-ConsoleTextEditor

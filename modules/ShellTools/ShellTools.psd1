@@ -1,5 +1,5 @@
 @{
-    ModuleVersion = '0.0.1'
+    ModuleVersion = '0.0.2'
     GUID = '4e438b63-08a5-437e-80e6-7d7a7bbc88e1'
     Author = 'alan'
     RootModule = 'ShellTools.psm1'
@@ -28,6 +28,7 @@
         'Invoke-DockerCompose',
         'Invoke-Timetracker',
         'Invoke-NuGet',
+        'New-DirectoryAndSetLocation',
         'Remove-DirectoryWithRecurseForce',
         'Update-SvnRepo'
     )
