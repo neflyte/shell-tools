@@ -1,6 +1,8 @@
 Function Get-GitBranch {
+    [OutputType([string])]
+    param()
     $ref = git symbolic-ref --short HEAD 2>$null
-    if (-not($?) -or $ref -eq "") {
+    if (-not($?) -or $ref -eq '') {
         $ref = git describe --tags --always 2>$null
     }
     return $ref
@@ -20,10 +22,10 @@ Function Get-GitTags {
 
 Function Reset-GitBranch {
     $GITBR = Get-GitBranch
-    if ($GITBR -eq "") {
-        throw "can't figure out the current branch"
+    if ($GITBR -eq '') {
+        throw 'cannot determine the current branch'
     }
-    Write-Output "hard resetting to ${GITBR}"
+    Write-Host "hard resetting to ${GITBR}"
     git reset --hard $GITBR
 }
 
@@ -54,3 +56,5 @@ function Test-GitRepo {
     }
     return $true
 }
+
+Export-ModuleMember -Function 'Get-GitBranch','Get-GitBranches','Get-GitRepoStatus','Get-GitTags','Reset-GitBranch','Set-GitBranch','Update-GitOriginRepo','Update-GitRepo','Test-GitRepo'

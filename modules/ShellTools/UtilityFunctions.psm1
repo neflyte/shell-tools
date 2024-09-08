@@ -10,11 +10,10 @@
     [System.IO.DirectoryInfo] The desired directory, if it exists; $null otherwise.
 #>
 function Find-DirectoryFromParent {
-    [CmdletBinding()]
     [OutputType([System.IO.DirectoryInfo])]
     param(
         [String]$Start = $PWD.ToString(),
-        [Parameter(Mandatory=$true)][String]$Directory
+        [Parameter(Mandatory)][String]$Directory
     )
     Write-Debug "Start=${Start}, Directory=${Directory}"
     $startingDir = $PWD
@@ -45,8 +44,7 @@ function Find-DirectoryFromParent {
 function Remove-DirectoryWithRecurseForce {
     [CmdletBinding(SupportsShouldProcess)]
     param(
-        [Parameter(Mandatory)]
-        [string]$Directory
+        [Parameter(Position=0,Mandatory)][string]$Directory
     )
     $directoryLocation = Get-Item -Path $Directory -ErrorAction SilentlyContinue -ErrorVariable locationError
     if ($locationError) {
@@ -149,3 +147,5 @@ function New-DirectoryAndSetLocation {
     $null = New-Item $Path -Type Directory -Force
     Set-Location $Path
 }
+
+Export-ModuleMember -Function 'Find-DirectoryFromParent','Remove-DirectoryWithRecurseForce','Get-ChildItemWide','Invooke-ConsoleTextEditor','Invoke-GraphicalTextEditor','Invoke-Docker','Invoke-DockerCompose','Invoke-Timetracker','Invoke-NuGet','Get-LastWeekTimesheet','Update-SvnRepo','New-DirectoryAndSetLocation'

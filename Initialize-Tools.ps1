@@ -30,7 +30,6 @@ if ($env:PSModulePath -ne '') {
     $modulesPath += [System.IO.Path]::PathSeparator + $env:PSModulePath
 }
 $env:PSModulePath = $modulesPath
-Import-Module ShellTools -Force
 #
 # Aliases
 if ($null -eq $env:TOOLS_ALIASES_FILE -or -not(Test-Path $env:TOOLS_ALIASES_FILE)) {

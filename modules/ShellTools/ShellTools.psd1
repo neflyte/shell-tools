@@ -1,5 +1,5 @@
 @{
-    ModuleVersion = '0.0.2'
+    ModuleVersion = '0.0.3'
     GUID = '4e438b63-08a5-437e-80e6-7d7a7bbc88e1'
     Author = 'alan'
     RootModule = 'ShellTools.psm1'
