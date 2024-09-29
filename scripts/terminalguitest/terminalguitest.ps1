@@ -1,4 +1,7 @@
 param()
+@('TestWindow','EditParameterDialog').ForEach{
+    Remove-Module $_ -Force -ErrorAction SilentlyContinue
+}
 $consoleGuiTools = 'Microsoft.PowerShell.ConsoleGuiTools'
 Import-Module $consoleGuiTools
 $module = (Get-Module $consoleGuiTools -List).ModuleBase
