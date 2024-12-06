@@ -1,18 +1,10 @@
 param()
-$screens = @(nvidia-settings -q screens)
-if (-not($?)) {
-    Write-Verbose 'could not get list of connected screens'
-    exit 1
+$powerMizerModeValue = '0'
+$connectedDisplaysMatches = nvidia-settings -d -q '[gpu:0]/ConnectedDisplays' 2>&1 | Select-String "ConnectedDisplays. \(.*\):(.*)"
+if ($connectedDisplaysMatches.Matches[0].Groups[1].ToString().Trim() -ne '') {
+    $powerMizerModeValue = '1'
 }
-Write-Verbose "got list of connected screens; screens: ${screens}"
-$powerMizerModeSetting = '[gpu:0]/GpuPowerMizerMode='
-if ($screens.Length -le 1) {
-    Write-Verbose 'no screens connected; set PowerMizer mode to adaptive'
-    $powerMizerModeSetting += '0'
-} else {
-    Write-Verbose 'found connected screens; set PowerMizer to max performance'
-    $powerMizerModeSetting += '1'
-}
+$powerMizerModeSetting = "[gpu:0]/GpuPowerMizerMode=${powerMizerModeValue}"
 Write-Verbose "PS> nvidia-settings -a `"${powerMizerModeSetting}`""
 $output = nvidia-settings -a "${powerMizerModeSetting}"
 if (-not($?)) {
