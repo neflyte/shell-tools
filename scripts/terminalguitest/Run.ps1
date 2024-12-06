@@ -2,7 +2,7 @@ using namespace Terminal.Gui
 using module ./TestWindow.psm1
 
 [Application]::Init()
-$Window = [TestWindow]::new()
-[Application]::Run($Window)
-$Window.Dispose()
+$testWindow = [TestWindow]::new()
+[Application]::Run($testWindow)
+$testWindow.Dispose()
 [Application]::ShutDown()
