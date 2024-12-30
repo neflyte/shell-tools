@@ -1,7 +1,8 @@
 param()
 $powerMizerModeValue = '0'
 $connectedDisplaysMatches = nvidia-settings -d -q '[gpu:0]/ConnectedDisplays' 2>&1 | Select-String "ConnectedDisplays. \(.*\):(.*)"
-if ($connectedDisplaysMatches.Matches[0].Groups[1].ToString().Trim() -ne '') {
+$connectedDisplays = $connectedDisplaysMatches.Matches[0].Groups[1].ToString().Trim()
+if ($connectedDisplays -ne '' -and $connnectedDisplays -ne '.') {
     $powerMizerModeValue = '1'
 }
 $powerMizerModeSetting = "[gpu:0]/GpuPowerMizerMode=${powerMizerModeValue}"
