@@ -39,9 +39,10 @@ alias ni="npm i"
 alias nci="npm ci"
 #
 # yt-dlp
-alias ytdump="yt-dlp --no-playlist --embed-thumbnail --write-thumbnail --all-formats --add-metadata --no-overwrites -o '%(id)s_%(format)s.%(ext)s'"
-alias yta="yt-dlp --embed-thumbnail --format 'bestaudio[ext=wav]/bestaudio[ext=m4a]/bestaudio[ext=mp4]/bestaudio[ext=mp3]/bestaudio' -o '%(title)s.%(ext)s'"
-alias ytv="yt-dlp --format 'bestvideo+bestaudio/best' -o '%(title)s.%(ext)s'"
+alias ytdump="yt-dlp --no-playlist --embed-metadata --embed-thumbnail --write-thumbnail --all-formats --add-metadata --no-overwrites -o '%(id)s_%(format)s.%(ext)s'"
+alias yta="yt-dlp --embed-thumbnail --format 'ba[ext=wav]/ba[ext=m4a]/ba[ext=mp4]/ba[ext=mp3]/ba' -o '%(title)s.%(ext)s'"
+alias ytapl="yt-dlp --yes-playlist --embed-thumbnail --format 'ba[ext=wav]/ba[ext=m4a]/ba[ext=mp4]/ba[ext=mp3]/ba' -o '%(playlist_index)s_%(track_number)s_%(title)s.%(ext)s'"
+alias ytv="yt-dlp --embed-metadata --embed-thumbnail --format 'bv+ba/b' -o '%(title)s.%(ext)s'"
 #
 # Wine
 alias w32="export WINEARCH=win32 && export WINEPREFIX=\${HOME}/.wine32"
