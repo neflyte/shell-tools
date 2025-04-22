@@ -44,14 +44,10 @@ Function Update-GitRepo {
 function Test-GitRepo {
     [OutputType([Boolean])]
     param(
-        [String]$Directory = $PWD
+        [Parameter(Position=0)][String]$Directory = $PWD
     )
-    $repoDir = Find-DirectoryFromParent -Start $Directory -Directory ".git" -ErrorAction SilentlyContinue -ErrorVariable repoError
-    if ($repoError) {
-        $repoError | ForEach-Object { Write-Error $_ }
-        return $false
-    }
-    if ($null -eq $repoDir) {
+    $repoDir = Find-DirectoryFromParent -Start $Directory -Directory ".git" -ErrorAction SilentlyContinue
+    if (-not($?) -or $null -eq $repoDir) {
         return $false
     }
     return $true

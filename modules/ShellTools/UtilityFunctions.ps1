@@ -10,9 +10,10 @@
     [System.IO.DirectoryInfo] The desired directory, if it exists; $null otherwise.
 #>
 function Find-DirectoryFromParent {
+    [CmdletBinding()]
     [OutputType([System.IO.DirectoryInfo])]
     param(
-        [String]$Start = $PWD.ToString(),
+        [Parameter(Position=0)][String]$Start = "$PWD",
         [Parameter(Mandatory)][String]$Directory
     )
     Write-Debug "Start=${Start}, Directory=${Directory}"
@@ -22,10 +23,9 @@ function Find-DirectoryFromParent {
         while ($null -ne $currentDir) {
             Write-Debug "Set-Location $currentDir"
             Set-Location $currentDir
-            Write-Debug "Get-ChildItem -Attribute 'Directory','Hidden' -Filter ${Directory} -ErrorAction SilentlyContinue -ErrorVariable getItemError"
-            $desiredDir = Get-ChildItem -Attribute 'Directory','Hidden' -Filter $Directory -ErrorAction SilentlyContinue -ErrorVariable getItemError
-            if ($getItemError) {
-                Write-Error -ErrorRecord $getItemError
+            Write-Debug "Get-ChildItem -Attribute 'Directory','Hidden' -Filter ${Directory} -ErrorAction SilentlyContinue"
+            $desiredDir = Get-ChildItem -Attribute 'Directory','Hidden' -Filter $Directory -ErrorAction SilentlyContinue
+            if (-not($?)) {
                 return $null
             }
             if ($null -ne $desiredDir) {
@@ -46,9 +46,9 @@ function Remove-DirectoryWithRecurseForce {
     param(
         [Parameter(Position=0,Mandatory)][string]$Directory
     )
-    $directoryLocation = Get-Item -Path $Directory -ErrorAction SilentlyContinue -ErrorVariable locationError
-    if ($locationError) {
-        throw "invalid directory ${Directory}: ${locationError}"
+    $directoryLocation = Get-Item -Path $Directory -ErrorAction SilentlyContinue
+    if (-not($?)) {
+        throw "invalid directory ${Directory}"
     }
     $directoryLoc = $directoryLocation.FullName
     Write-Debug "directory: ${directoryLoc}"
@@ -144,7 +144,9 @@ function New-DirectoryAndSetLocation {
     param(
         [Parameter(Mandatory,Position=0)][string]$Path
     )
-    $null = New-Item $Path -Type Directory -Force
+    if (-not(Test-Path $Path)) {
+        $null = New-Item $Path -Type Directory -Force
+    }
     Set-Location $Path
 }
 
