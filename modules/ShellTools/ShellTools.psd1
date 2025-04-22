@@ -5,6 +5,7 @@
     RootModule = 'ShellTools.ps1'
     NestedModules = @(
         'GitFunctions.ps1',
+        'MediaFunctions.ps1',
         'ShellFunctions.ps1',
         'UtilityFunctions.ps1'
     )

@@ -23,6 +23,11 @@ Set-Alias mdcd New-DirectoryAndSetLocation
 <# File editing #>
 Set-Alias g Invoke-GraphicalTextEditor
 Set-Alias e Invoke-ConsoleTextEditor
+<# Media functions #>
+Set-Alias ytv Get-WebVideo
+Set-Alias yta Get-WebAudio
+Set-Alias ytapl Get-WebAudioPlaylist
+Set-Alias ytdump Get-MediaDump
 <# Other tools #>
 Set-Alias tt Invoke-Timetracker
 Set-Alias dkr Invoke-Docker
