@@ -30,13 +30,15 @@ function Convert-FlacToAlac {
     $inFileItem = Get-Item "${psInputFile}"
     $outFilePath = $inFileItem.Directory.FullName
     $outFile = Join-Path $outFilePath "$($inFileItem.BaseName).m4a"
-    Write-Debug "outFilePath=${outFilePath}, outFile=${outFile}"
+    $psOutFile = $outFile.Replace('[', '`[')
+    $psOutFile = $psOutFile.Replace(']', '`]')
+    Write-Debug "outFilePath=${outFilePath}, outFile=${outFile}, psOutFile=${psOutFile}"
     # If the output file exists, overwrite it if -Force was passed; otherwise throw an error
-    if (Test-Path $outFile) {
+    if (Test-Path "${psOutFile}") {
         if (-not($Force)) {
             throw "Output file ${outFile} exists; use -Force to overwrite it"
         }
-        Remove-Item $outFile -Force
+        Remove-Item $psOutFile -Force
     }
     # Construct arguments to ffmpeg
     $ffmpegArgs = @(
