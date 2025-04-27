@@ -20,34 +20,43 @@ function Convert-FlacToAlac {
         [Parameter(Mandatory,Position=0)][String]$InFile,
         [switch]$Force
     )
-    if (-not(Test-Path $InFile)) {
-        throw "Input file ${InFile} does not exist"
+    # Escape the [ and ] characters when using the path/file with PowerShell
+    $psInputFile = $InFile.Replace('[', '`[')
+    $psInputFile = $psInputFile.Replace(']', '`]')
+    # Ensure the input file exists
+    if (-not(Test-Path "${psInputFile}")) {
+        throw "Input file ${psInputFile} does not exist"
     }
-    $inFileItem = Get-Item $InFile
+    $inFileItem = Get-Item "${psInputFile}"
     $outFilePath = $inFileItem.Directory.FullName
     $outFile = Join-Path $outFilePath "$($inFileItem.BaseName).m4a"
     Write-Debug "outFilePath=${outFilePath}, outFile=${outFile}"
+    # If the output file exists, overwrite it if -Force was passed; otherwise throw an error
     if (Test-Path $outFile) {
         if (-not($Force)) {
             throw "Output file ${outFile} exists; use -Force to overwrite it"
         }
         Remove-Item $outFile -Force
     }
+    # Construct arguments to ffmpeg
     $ffmpegArgs = @(
         '-v', 'warning',
-        '-i', $InFile,
+        '-i', "$($inFileItem.FullName)",
         '-vcodec', 'copy',
         '-acodec', 'alac',
         '-map_metadata', '0',
-        $outFile
+        "${outFile}"
     )
+    if ($Force) {
+        $ffmpegArgs += '-y'
+    }
     Write-Host "$($inFileItem.FullName)"
     Write-Verbose "Convert $($inFileItem.FullName) to ${outFile}"
     Write-Debug "PS> ffmpeg ${ffmpegArgs}"
     ffmpeg $ffmpegArgs
     $returnCode = $LASTEXITCODE
     if ($returnCode -ne 0) {
-        throw "Error converting FLAC to ALAC; returnCode=${returnCode}"
+        throw "Error converting ALAC; returnCode=${returnCode}"
     }
 }
 
