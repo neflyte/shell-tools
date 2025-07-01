@@ -64,24 +64,24 @@ Function Get-ChildItemWide {
 
 function Invoke-ConsoleTextEditor {
     $editor = 'notepad.exe'
-    if ($PSVersionTable.Platform -eq 'Unix') {
+    if ($IsLinux) {
         $editor = 'vim'
     }
-    if ($null -ne $env:EDITOR) {
+    if ($env:EDITOR -ne '') {
         $editor = $env:EDITOR
     }
-    & $editor $args
+    & "${editor}" $args
 }
 
 function Invoke-GraphicalTextEditor {
     $editor = 'notepad.exe'
-    if ($PSVersionTable.Platform -eq 'Unix') {
+    if ($IsLinux) {
         $editor = 'gvim'
     }
-    if ($null -ne $env:VISUAL) {
+    if ($env:VISUAL -ne '') {
         $editor = $env:VISUAL
     }
-    Start-Process $editor -ArgumentList @($args) -NoNewWindow
+    Start-Process $editor -ArgumentList $args -NoNewWindow
 }
 
 function Invoke-Docker {
@@ -97,8 +97,8 @@ function Invoke-Timetracker {
 }
 
 Function Invoke-NuGet {
-    if ($PSVersionTable.OS -like 'Linux*') {
-        mono $(Join-Path $HOME 'bin' 'nuget.exe') $args
+    if ($IsLinux) {
+        mono "$(Join-Path $HOME 'bin' 'nuget.exe')" $args
     } else {
         nuget $args
     }
@@ -150,4 +150,20 @@ function New-DirectoryAndSetLocation {
     Set-Location $Path
 }
 
-Export-ModuleMember -Function 'Find-DirectoryFromParent','Remove-DirectoryWithRecurseForce','Get-ChildItemWide','Invooke-ConsoleTextEditor','Invoke-GraphicalTextEditor','Invoke-Docker','Invoke-DockerCompose','Invoke-Timetracker','Invoke-NuGet','Get-LastWeekTimesheet','Update-SvnRepo','New-DirectoryAndSetLocation'
+function Clear-CsProjOutput {
+    [CmdletBinding()]
+    param(
+        [Parameter(Position=0)][string]$Path = $PWD
+    )
+    foreach ($csProjFile in (Get-ChildItem $Path -File -Filter '*.csproj' -Recurse)) {
+        foreach ($outputDirectory in 'bin','obj') {
+            $targetDirectory = Join-Path $csProjFile.Directory $outputDirectory
+            if (-not(Test-Path $targetDirectory)) {
+                continue
+            }
+            Remove-DirectoryWithRecurseForce $targetDirectory
+        }
+    }
+}
+
+Export-ModuleMember -Function 'Find-DirectoryFromParent','Remove-DirectoryWithRecurseForce','Get-ChildItemWide','Invoke-ConsoleTextEditor','Invoke-GraphicalTextEditor','Invoke-Docker','Invoke-DockerCompose','Invoke-Timetracker','Invoke-NuGet','Get-LastWeekTimesheet','Update-SvnRepo','New-DirectoryAndSetLocation'
