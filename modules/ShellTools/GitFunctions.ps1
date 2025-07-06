@@ -9,35 +9,42 @@ Function Get-GitBranch {
 }
 
 Function Get-GitBranches {
+    if ($IsWindows) { $env:GIT_REDIRECT_STDERR = '2>&1' }
     git branch $args
 }
 
 Function Get-GitRepoStatus {
+    if ($IsWindows) { $env:GIT_REDIRECT_STDERR = '2>&1' }
     git status
 }
 
 Function Get-GitTags {
+    if ($IsWindows) { $env:GIT_REDIRECT_STDERR = '2>&1' }
     git tag $args
 }
 
 Function Reset-GitBranch {
-    $GITBR = Get-GitBranch
-    if ($GITBR -eq '') {
+    $gitBranch = Get-GitBranch
+    if ($gitBranch -eq '') {
         throw 'cannot determine the current branch'
     }
-    Write-Host "hard resetting to ${GITBR}"
-    git reset --hard $GITBR
+    Write-Host "hard resetting to ${gitBranch}"
+    if ($IsWindows) { $env:GIT_REDIRECT_STDERR = '2>&1' }
+    git reset --hard "${gitBranch}"
 }
 
 Function Set-GitBranch {
+    if ($IsWindows) { $env:GIT_REDIRECT_STDERR = '2>&1' }
     git checkout $args
 }
 
 Function Update-GitOriginRepo {
+    if ($IsWindows) { $env:GIT_REDIRECT_STDERR = '2>&1' }
     git fetch origin $args
 }
 
 Function Update-GitRepo {
+    if ($IsWindows) { $env:GIT_REDIRECT_STDERR = '2>&1' }
     git pull $args
 }
 
@@ -46,8 +53,8 @@ function Test-GitRepo {
     param(
         [Parameter(Position=0)][String]$Directory = $PWD
     )
-    $repoDir = Find-DirectoryFromParent -Start $Directory -Directory ".git" -ErrorAction SilentlyContinue
-    if (-not($?) -or $null -eq $repoDir) {
+    $repoDir = Find-DirectoryFromParent -Start $Directory -Directory '.git'
+    if ($null -eq $repoDir) {
         return $false
     }
     return $true

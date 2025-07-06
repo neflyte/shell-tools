@@ -1,8 +1,10 @@
 function Build-PredefinedLocationFunctions {
     param()
-    foreach ($locationAlias in $ShellToolsPredefinedLocations.Keys) {
+    $locationAliases = $ShellToolsPredefinedLocations | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name
+    foreach ($locationAlias in $locationAliases) {
+        Write-Debug "locationAlias=${locationAlias}"
         $funcName = "Set-PredefinedLocationTo${locationAlias}"
-        $scriptblockString = "& { Set-Location '${locationAlias}' }"
+        $scriptblockString = "& { Set-PredefinedLocation '${locationAlias}' }"
         $null = New-Item -Path Function:\ -Name global:$funcName -Value ([scriptblock]::Create($scriptblockString)) -Options 'ReadOnly','AllScope' -Force
     }
 }
@@ -14,7 +16,8 @@ function Clear-PredefinedLocationFunctions {
 
 function Build-PredefinedLocationAliases {
     param()
-    foreach ($locationAlias in $ShellToolsPredefinedLocations.Keys){
+    $locationAliases = $ShellToolsPredefinedLocations | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name
+    foreach ($locationAlias in $locationAliases){
         Set-Alias -Name "cd${locationAlias}" -Value "Set-PredefinedLocationTo${locationAlias}" -Option 'AllScope','ReadOnly' -Scope Global -Force
     }
 }
@@ -28,9 +31,10 @@ function Set-PredefinedLocation {
     param(
         [Parameter(Mandatory,Position=0)][String]$LocationAlias
     )
-    if (-not($LocationAlias -in $ShellToolsPredefinedLocations.Keys)) {
+    if (-not($LocationAlias -in ($ShellToolsPredefinedLocations | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name))) {
         throw "Predefined location ${LocationAlias} is not defined"
     }
+    Write-Debug "PS> Set-Location $($ShellToolsPredefinedLocations.$LocationAlias)"
     Set-Location $ShellToolsPredefinedLocations.$LocationAlias
 }
 
