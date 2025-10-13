@@ -21,9 +21,9 @@ function Find-DirectoryFromParent {
     try {
         $currentDir = Get-Item $Start
         while ($null -ne $currentDir) {
-            Write-Debug "Set-Location $currentDir"
+            Write-Debug "PS> Set-Location ${currentDir}"
             Set-Location $currentDir
-            Write-Debug "Get-ChildItem -Attribute 'Directory','Hidden' -Filter ${Directory} -ErrorAction SilentlyContinue"
+            Write-Debug "PS> Get-ChildItem -Attribute 'Directory','Hidden' -Filter ${Directory} -ErrorAction SilentlyContinue"
             $desiredDir = Get-ChildItem -Attribute 'Directory','Hidden' -Filter $Directory -ErrorAction SilentlyContinue
             if (-not($?)) {
                 return $null
@@ -44,17 +44,21 @@ function Find-DirectoryFromParent {
 function Remove-DirectoryWithRecurseForce {
     [CmdletBinding(SupportsShouldProcess)]
     param(
-        [Parameter(Position=0,Mandatory)][string]$Directory
+        [Parameter(Position=0, Mandatory, ValueFromRemainingArguments=$true)]
+        [string[]] $Directory
     )
-    $directoryLocation = Get-Item -Path $Directory -ErrorAction SilentlyContinue
-    if (-not($?)) {
-        throw "invalid directory ${Directory}"
-    }
-    $directoryLoc = $directoryLocation.FullName
-    Write-Debug "directory: ${directoryLoc}"
-    if ($PSCmdlet.ShouldProcess($directoryLoc)) {
-        Remove-Item -Path $directoryLoc -Recurse -Force
-        Write-Debug "removed directory ${directoryLoc}"
+    foreach ($dir in $Directory) {
+        $directoryLocation = Get-Item -Path $dir -ErrorAction SilentlyContinue
+        if (-not($?)) {
+            Write-Error "invalid directory ${dir}"
+            continue
+        }
+        $directoryLoc = $directoryLocation.FullName
+        Write-Debug "directory: ${directoryLoc}"
+        if ($PSCmdlet.ShouldProcess($directoryLoc)) {
+            Remove-Item -Path $directoryLoc -Recurse -Force
+            Write-Debug "removed directory ${directoryLoc}"
+        }
     }
 }
 
@@ -70,7 +74,11 @@ function Invoke-ConsoleTextEditor {
     if ($env:EDITOR -ne '') {
         $editor = $env:EDITOR
     }
-    & "${editor}" $args
+    if ([string]::IsNullOrEmpty($editor)) {
+        throw 'could not determine an editor to run'
+    }
+    # & "${editor}" $args
+    Start-Process -FilePath $editor -ArgumentList $args -NoNewWindow -Wait
 }
 
 function Invoke-GraphicalTextEditor {
@@ -81,7 +89,10 @@ function Invoke-GraphicalTextEditor {
     if ($env:VISUAL -ne '') {
         $editor = $env:VISUAL
     }
-    Start-Process $editor -ArgumentList $args -NoNewWindow
+    if ([string]::IsNullOrEmpty($editor)) {
+        throw 'could not determine a graphical editor to run'
+    }
+    Start-Process -FilePath $editor -ArgumentList $args -NoNewWindow
 }
 
 function Invoke-Docker {

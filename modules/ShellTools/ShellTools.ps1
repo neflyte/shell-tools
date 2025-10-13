@@ -10,6 +10,8 @@ if (-not(Get-ChildItem variable:ShellToolsPredefinedLocations -ErrorAction Silen
     if (Test-Path $configFile) {
         $locations = Get-Content $configFile -Raw | ConvertFrom-Json
     }
-    Write-Debug "Set locations to: $($locations | ConvertTo-Json -Compress)"
-    New-Variable -Name ShellToolsPredefinedLocations -Scope Global -Option 'AllScope','ReadOnly' -Force -Value $locations
+    if ($null -ne $locations) {
+        Write-Debug "Set locations to: $($locations | ConvertTo-Json -Compress)"
+        New-Variable -Name ShellToolsPredefinedLocations -Scope Global -Option 'AllScope','ReadOnly' -Force -Value $locations
+    }
 }

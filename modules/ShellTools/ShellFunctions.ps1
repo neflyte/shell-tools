@@ -17,7 +17,7 @@ function Clear-PredefinedLocationFunctions {
 function Build-PredefinedLocationAliases {
     param()
     $locationAliases = $ShellToolsPredefinedLocations | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name
-    foreach ($locationAlias in $locationAliases){
+    foreach ($locationAlias in $locationAliases) {
         Set-Alias -Name "cd${locationAlias}" -Value "Set-PredefinedLocationTo${locationAlias}" -Option 'AllScope','ReadOnly' -Scope Global -Force
     }
 }

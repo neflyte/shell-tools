@@ -2,12 +2,12 @@
 #
 # powerline.bash -- Powerline-like bash prompt; based on bash-powerline
 #
-POWERLINE_GIT=1    # git branch + status
-POWERLINE_SVN=1    # svn revision + status
+POWERLINE_GIT=1      # git branch + status
+POWERLINE_SVN=1      # svn revision + status
 POWERLINE_MINIKUBE=0 # minikube profile
-POWERLINE_KUBE=0   # active kubernetes context
-POWERLINE_DOCKER=0 # active docker context
-POWERLINE_TT=1     # timetracker status
+POWERLINE_KUBE=0     # active kubernetes context
+POWERLINE_DOCKER=0   # active docker context
+POWERLINE_TT=0       # timetracker status
 __powerline() {
   # Colorscheme
   readonly RESET='\[\033[m\]'

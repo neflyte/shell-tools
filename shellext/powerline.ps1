@@ -1,6 +1,6 @@
 $POWERLINE_GIT = 1 # git branch + status
 $POWERLINE_SVN = 1 # svn revision + status
-$POWERLINE_TT = 1 # timetracker status
+$POWERLINE_TT = 0 # timetracker status
 
 $SYMBOL_GIT_BRANCH = ''
 $SYMBOL_GIT_MODIFIED = '*'
