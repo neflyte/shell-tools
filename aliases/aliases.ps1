@@ -32,5 +32,6 @@ Set-Alias ytdump Get-MediaDump
 Set-Alias tt Invoke-Timetracker
 Set-Alias dkr Invoke-Docker
 Set-Alias dkc Invoke-DockerCompose
+Set-Alias sd Set-DockerContext
 Set-Alias ng Invoke-NuGet
 Set-Alias ib Invoke-Build

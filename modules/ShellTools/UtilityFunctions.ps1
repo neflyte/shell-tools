@@ -177,4 +177,11 @@ function Clear-CsProjOutput {
     }
 }
 
-Export-ModuleMember -Function 'Find-DirectoryFromParent','Remove-DirectoryWithRecurseForce','Get-ChildItemWide','Invoke-ConsoleTextEditor','Invoke-GraphicalTextEditor','Invoke-Docker','Invoke-DockerCompose','Invoke-Timetracker','Invoke-NuGet','Get-LastWeekTimesheet','Update-SvnRepo','New-DirectoryAndSetLocation'
+function Set-DockerContext {
+    param(
+        [Parameter(Mandatory, Position = 0)][string]$Context
+    )
+    docker context use "${Context}"
+}
+
+Export-ModuleMember -Function 'Find-DirectoryFromParent','Remove-DirectoryWithRecurseForce','Get-ChildItemWide','Invoke-ConsoleTextEditor','Invoke-GraphicalTextEditor','Invoke-Docker','Invoke-DockerCompose','Invoke-Timetracker','Invoke-NuGet','Get-LastWeekTimesheet','Update-SvnRepo','New-DirectoryAndSetLocation','Set-DockerContext'
