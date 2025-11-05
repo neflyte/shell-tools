@@ -1,6 +1,7 @@
-$POWERLINE_GIT = 1 # git branch + status
-$POWERLINE_SVN = 1 # svn revision + status
-$POWERLINE_TT = 0 # timetracker status
+$POWERLINE_GIT = 1    # git branch + status
+$POWERLINE_SVN = 1    # svn revision + status
+$POWERLINE_TT = 0     # timetracker status
+$POWERLINE_DOCKER = 1 # active docker context
 
 $SYMBOL_GIT_BRANCH = ''
 $SYMBOL_GIT_MODIFIED = '*'
@@ -17,6 +18,7 @@ $COLOR_SVN = $PSStyle.Foreground.Magenta
 $COLOR_USERHOST = $PSStyle.Foreground.BrightBlack
 $COLOR_CWD = $PSStyle.Foreground.BrightBlue
 $COLOR_TEXT = $PSStyle.Foreground.White
+$COLOR_DOCKER = $PSStyle.Foreground.White
 $COLOR_RESET = $PSStyle.Reset
 
 function Get-PowerlineSymbol {
@@ -161,6 +163,30 @@ function Get-TimetrackerInfo {
     return $(& $ttExec s -s)
 }
 
+function Get-DockerContext {
+    [OutputType([string])]
+    param()
+    if ($POWERLINE_DOCKER -ne 1) {
+        return ''
+    }
+    if ($null -eq $(Get-Command 'docker' -ErrorAction SilentlyContinue)) {
+        return '' # docker not found
+    }
+    $rawContexts = docker context ls --format '{{json .}}'
+    if ($LASTEXITCODE -ne 0) {
+        return ''
+    }
+    $dockerContexts = $rawContexts | ConvertFrom-Json
+    if (-not ($?)) {
+        return ''
+    }
+    $currentContext = $dockerContexts.Where{ $_.Current -eq $true }
+    if ($null -eq $currentContext) {
+        return ''
+    }
+    return $currentContext.Name
+}
+
 function Get-UserAndHost {
     [OutputType([string])]
     param()
@@ -183,6 +209,7 @@ function prompt {
     $git = Get-GitInfo
     $svn = Get-SvnInfo
     $ttstatus = Get-TimetrackerInfo
+    $dockerStatus = Get-DockerContext
 
     $cwd = "${COLOR_CWD}$(Get-Location)${COLOR_RESET}"
     $userhost = "${COLOR_USERHOST}$(Get-UserAndHost)${COLOR_RESET}"
@@ -196,6 +223,9 @@ function prompt {
     }
     if ($svn -ne '') {
         $lineone += "${COLOR_SVN}S:${svn}${COLOR_RESET} "
+    }
+    if ($dockerStatus -ne '') {
+        $lineone += "${COLOR_DOCKER}D:${dockerStatus}${COLOR_RESET} "
     }
     if ($lineone -ne '') {
         $lineone += "`n"
