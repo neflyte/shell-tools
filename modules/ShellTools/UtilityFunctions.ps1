@@ -184,4 +184,47 @@ function Set-DockerContext {
     docker context use "${Context}"
 }
 
-Export-ModuleMember -Function 'Find-DirectoryFromParent','Remove-DirectoryWithRecurseForce','Get-ChildItemWide','Invoke-ConsoleTextEditor','Invoke-GraphicalTextEditor','Invoke-Docker','Invoke-DockerCompose','Invoke-Timetracker','Invoke-NuGet','Get-LastWeekTimesheet','Update-SvnRepo','New-DirectoryAndSetLocation','Set-DockerContext'
+function Build-JabbaPs1 {
+    param(
+        [Parameter(Mandatory)][string]$JabbaHome
+    )
+    <# /home/linuxbrew/.linuxbrew/opt/jabba #>
+
+    if (-not(Test-Path $JabbaHome))
+    {
+        throw "Jabba home path '${JabbaHome}' is invalid"
+    }
+
+    $jabbaPs1Path = Join-Path $JabbaHome 'jabba.ps1'
+    $jabbaBinPath = Join-Path $JabbaHome 'bin' 'jabba'
+    if ($IsWindows)
+    {
+        $jabbaBinPath += '.exe'
+    }
+
+    $jabbaPs1 = @"
+`$env:JABBA_HOME="${JabbaHome}"
+
+function jabba
+{
+    `$fd3=`$([System.IO.Path]::GetTempFileName())
+    `$command="& '${jabbaBinPath}' `$args --fd3 ```"`$fd3```""
+    & { `$env:JABBA_SHELL_INTEGRATION="ON"; Invoke-Expression `$command }
+    `$fd3content=`$(Get-Content `$fd3)
+    if (`$fd3content) {
+        `$expression=`$fd3content.replace("export ","```$env:").replace("unset ","Remove-Item env:") -join "``n"
+        if (-not `$expression -eq "") { Invoke-Expression `$expression }
+    }
+    Remove-Item -Force `$fd3
+}
+"@
+    Set-Content -Path $jabbaPs1Path -Value $jabbaPs1 -Force
+    Write-Host "Wrote ${jabbaPs1Path} successfully"
+}
+
+Export-ModuleMember -Function @(
+    'Find-DirectoryFromParent','Remove-DirectoryWithRecurseForce','Get-ChildItemWide',
+    'Invoke-ConsoleTextEditor','Invoke-GraphicalTextEditor','Invoke-Docker','Invoke-DockerCompose',
+    'Invoke-Timetracker','Invoke-NuGet','Get-LastWeekTimesheet','Update-SvnRepo',
+    'New-DirectoryAndSetLocation','Set-DockerContext','Build-JabbaPs1'
+)
