@@ -6,6 +6,7 @@
     NestedModules = @(
         'GitFunctions.ps1',
         'MediaFunctions.ps1',
+        'NerdFont.ps1',
         'ShellFunctions.ps1',
         'UtilityFunctions.ps1'
     )
