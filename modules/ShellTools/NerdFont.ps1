@@ -3,7 +3,8 @@ function Build-NerdFonts {
     param(
         [Parameter(Mandatory)][String]$InputDirectory,
         [Parameter(Mandatory)][String]$OutputDirectory,
-        [int]$ParallelProcesses = 4
+        [int]$ParallelProcesses = 4,
+        [switch]$Dry
     )
 
     # Check if fontforge is available
@@ -40,6 +41,7 @@ function Build-NerdFonts {
     $job = $fontFiles | ForEach-Object -ThrottleLimit $ParallelProcesses -AsJob -Parallel {
         $file = $_
         $outputDir = $using:OutputDirectory
+        $isDry = $using:Dry
         $fullName = $file.FullName
         $name = $file.Name
         $errorLog = Join-Path $outputDir "${name}.error.log"
@@ -56,12 +58,20 @@ function Build-NerdFonts {
             '-script',
             'font-patcher',
             '--complete',
+            '--makegroups',
+            '5',
             '--outputdir',
             $outputDir,
             '--quiet',
             '--no-progressbars',
-            $fullName
+            '--name',
+            "$($file.BaseName -replace '-','_')-NF"
         )
+        if ($isDry) {
+            $fontforgeArgs += '--dry'
+        }
+
+        $fontforgeArgs += $fullName
 
         # Execute fontforge command
         Write-Output "PS> fontforge ${fontforgeArgs} 2>${errorLog}"
