@@ -25,7 +25,7 @@ $jobLog = Initialize-PSJobLogger -Name 'doaacgain-parallel'
 $job = $filesToProcess | ForEach-Object -ThrottleLimit 4 -AsJob -Parallel {
     $log = $using:jobLog
 
-    $id = $_.Id
+    #$id = $_.Id
     $file = $_.File
     $name = $file.Name
     $fullName = $file.FullName
