@@ -77,7 +77,7 @@ function Get-GitInfo {
         return '' # not a git repo
     }
     $marks = ''
-    $gitStatus = git status --porcelain --branch
+    $gitStatus = git status --porcelain --branch --untracked-files=no
     if ($LASTEXITCODE -eq 0) {
         # scan first two lines of output from `git status`
         foreach ($line in $gitStatus) {
@@ -172,11 +172,17 @@ function Get-DockerContext {
     if ($null -eq $(Get-Command 'docker' -ErrorAction SilentlyContinue)) {
         return '' # docker not found
     }
-    $rawContexts = docker context ls --format '{{json .}}'
+    $dockerContext = docker context show
+    if (-not($?) -or [string]::IsNullOrEmpty($dockerContext))
+    {
+        return ''
+    }
+    return $dockerContext
+    <#$rawContexts = docker context ls --format '{{json .}}'
     if ($LASTEXITCODE -ne 0) {
         return ''
     }
-    $dockerContexts = $rawContexts | ConvertFrom-Json
+    $dockerContexts = ConvertFrom-Json -InputObject $rawContexts -ErrorAction Continue
     if (-not ($?)) {
         return ''
     }
@@ -184,7 +190,7 @@ function Get-DockerContext {
     if ($null -eq $currentContext) {
         return ''
     }
-    return $currentContext.Name
+    return $currentContext.Name#>
 }
 
 function Get-UserAndHost {

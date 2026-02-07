@@ -96,7 +96,7 @@ __powerline() {
         marks="${SYMBOL_GIT_MODIFIED}${marks}"
         break
       fi
-    done < <(${git_eng} status --porcelain --branch 2>/dev/null) # note the space between the two <
+    done < <(${git_eng} status --porcelain --branch --untracked-files=no 2>/dev/null) # note the space between the two <
 
     # print the git branch segment without a trailing newline
     echo -n "${ref}${marks}"
@@ -144,12 +144,16 @@ __powerline() {
     fi
     hash docker 2>/dev/null || return # docker not found
     local dockercontext
-    local ctxcount
-    ctxcount=$(docker context ls -q | wc -l | tr -d ' ') || ctxcount=0
-    if [[ ${ctxcount} -gt 0 ]]; then
-      dockercontext="$(docker context ls --format '{{json .}}' | jq -Mr 'select(.Current == true) | .Name')" || dockercontext=""
+#    local ctxcount
+#    ctxcount=$(docker context ls -q | wc -l | tr -d ' ') || ctxcount=0
+#    if [[ ${ctxcount} -gt 0 ]]; then
+#      dockercontext="$(docker context ls --format '{{json .}}' | jq -Mr 'select(.Current == true) | .Name')" || dockercontext=""
+#    fi
+    dockercontext="$(docker context show)"
+    if [ $? != 0 ]; then
+      return
     fi
-    echo -n "${dockercontext}"
+    echo -n "$(__trim_string ${dockercontext})"
   }
 
   __kubernetes_info() {

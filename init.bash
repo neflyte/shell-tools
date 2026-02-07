@@ -7,7 +7,7 @@
 export TOOLS_HOME="${1}"
 #
 # Functions
-[ -z "${TOOLS_FUNCTIONS_PATH}" ] && readonly TOOLS_FUNCTIONS_PATH="${TOOLS_HOME}/functions"
+readonly TOOLS_FUNCTIONS_PATH="${TOOLS_HOME}/functions"
 [ -d "${TOOLS_FUNCTIONS_PATH}" ] && {
   for FUNCTION_DEF in "${TOOLS_FUNCTIONS_PATH}"/*.inc.bash; do
     # shellcheck disable=SC1090
@@ -16,13 +16,13 @@ export TOOLS_HOME="${1}"
 }
 #
 # Aliases
-[ -z "${TOOLS_ALIASES_FILE}" ] && readonly TOOLS_ALIASES_FILE="aliases.bash"
-[ -z "${TOOLS_ALIASES_PATH}" ] && readonly TOOLS_ALIASES_PATH="${TOOLS_HOME}/aliases/${TOOLS_ALIASES_FILE}"
+readonly TOOLS_ALIASES_FILE="aliases.bash"
+readonly TOOLS_ALIASES_PATH="${TOOLS_HOME}/aliases/${TOOLS_ALIASES_FILE}"
 # shellcheck source=aliases/aliases.bash
 [ -r "${TOOLS_ALIASES_PATH}" ] && { . "${TOOLS_ALIASES_PATH}"; }
 #
 # Scripts
-[ -z "${TOOLS_SCRIPTS_PATH}" ] && readonly TOOLS_SCRIPTS_PATH="${TOOLS_HOME}/scripts"
+readonly TOOLS_SCRIPTS_PATH="${TOOLS_HOME}/scripts"
 [ -d "${TOOLS_SCRIPTS_PATH}" ] && {
   for SCRIPT in "${TOOLS_SCRIPTS_PATH}"/*.bash; do
     SCRIPT_NAME="$(base_name "${SCRIPT}")"
@@ -32,7 +32,7 @@ export TOOLS_HOME="${1}"
 }
 #
 # Completion
-[ -z "${TOOLS_COMPLETION_PATH}" ] && readonly TOOLS_COMPLETION_PATH="${TOOLS_HOME}/completion"
+readonly TOOLS_COMPLETION_PATH="${TOOLS_HOME}/completion"
 [ -d "${TOOLS_COMPLETION_PATH}" ] && [ -r "${TOOLS_COMPLETION_PATH}/completion.bash" ] && {
   . "${TOOLS_COMPLETION_PATH}/completion.bash"
 }
