@@ -222,9 +222,17 @@ function jabba
     Write-Host "Wrote ${jabbaPs1Path} successfully"
 }
 
+function Start-VSDevShell {
+    if (-not($IsWindows)) {
+        return
+    }
+    Import-Module "C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\Common7\Tools\Microsoft.VisualStudio.DevShell.dll"
+    Enter-VsDevShell c31061fe -SkipAutomaticLocation -DevCmdArguments "-arch=x64 -host_arch=x64"
+}
+
 Export-ModuleMember -Function @(
     'Find-DirectoryFromParent','Remove-DirectoryWithRecurseForce','Get-ChildItemWide',
     'Invoke-ConsoleTextEditor','Invoke-GraphicalTextEditor','Invoke-Docker','Invoke-DockerCompose',
     'Invoke-Timetracker','Invoke-NuGet','Get-LastWeekTimesheet','Update-SvnRepo',
-    'New-DirectoryAndSetLocation','Set-DockerContext','Build-JabbaPs1'
+    'New-DirectoryAndSetLocation','Set-DockerContext','Build-JabbaPs1', 'Start-VSDevShell'
 )

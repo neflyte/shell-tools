@@ -178,19 +178,6 @@ function Get-DockerContext {
         return ''
     }
     return $dockerContext
-    <#$rawContexts = docker context ls --format '{{json .}}'
-    if ($LASTEXITCODE -ne 0) {
-        return ''
-    }
-    $dockerContexts = ConvertFrom-Json -InputObject $rawContexts -ErrorAction Continue
-    if (-not ($?)) {
-        return ''
-    }
-    $currentContext = $dockerContexts.Where{ $_.Current -eq $true }
-    if ($null -eq $currentContext) {
-        return ''
-    }
-    return $currentContext.Name#>
 }
 
 function Get-UserAndHost {
