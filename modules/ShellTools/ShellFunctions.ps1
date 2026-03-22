@@ -2,9 +2,10 @@ function Build-PredefinedLocationFunctions {
     param()
     $locationAliases = $ShellToolsPredefinedLocations | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name
     foreach ($locationAlias in $locationAliases) {
-        Write-Debug "locationAlias=${locationAlias}"
+        Write-Verbose "Build location function ${locationAlias}"
         $funcName = "Set-PredefinedLocationTo${locationAlias}"
         $scriptblockString = "& { Set-PredefinedLocation '${locationAlias}' }"
+        Write-Debug "PS> New-Item -Path Function:\ -Name global:${funcName} -Value ([scriptblock]::Create('${scriptblockString}')) -Options 'ReadOnly','AllScope' -Force"
         $null = New-Item -Path Function:\ -Name global:$funcName -Value ([scriptblock]::Create($scriptblockString)) -Options 'ReadOnly','AllScope' -Force
     }
 }
@@ -18,6 +19,8 @@ function Build-PredefinedLocationAliases {
     param()
     $locationAliases = $ShellToolsPredefinedLocations | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name
     foreach ($locationAlias in $locationAliases) {
+        Write-Verbose "Build location alias cd${locationAlias}"
+        Write-Debug "PS> Set-Alias -Name 'cd${locationAlias}' -Value 'Set-PredefinedLocationTo${locationAlias}' -Option 'AllScope','ReadOnly' -Scope Global -Force"
         Set-Alias -Name "cd${locationAlias}" -Value "Set-PredefinedLocationTo${locationAlias}" -Option 'AllScope','ReadOnly' -Scope Global -Force
     }
 }
