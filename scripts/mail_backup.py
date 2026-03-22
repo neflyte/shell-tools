@@ -7,6 +7,7 @@ import datetime
 import shutil
 import sys
 import logging
+import lz4.frame
 from pathlib import Path
 from typing import Final
 
@@ -27,7 +28,7 @@ def backup_user(username: str, backup_only: bool = False, archive_only: bool = F
   """
   try:
     short_timestamp: str = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
-    backup_filename: str = f"{username}_Maildir_{short_timestamp}.tar.bz2"
+    backup_filename: str = f"{username}_Maildir_{short_timestamp}.tar.lz4"
     backup_file: Path = BACKUP_DIR / backup_filename
 
     # Conflict check: if the backup file exists, rename it (append PID)
@@ -46,9 +47,10 @@ def backup_user(username: str, backup_only: bool = False, archive_only: bool = F
       subprocess.run(["doveadm", "backup", "-u", username, MAILDIR_PATH], check=True)
 
     if not backup_only:
-      logger.info(f"Create bz2 tarball for {username}...")
-      with tarfile.open(backup_file, "w:bz2") as tar:
-        tar.add(user_home / "Maildir", arcname="Maildir")
+      logger.info(f"Create lz4 tarball for {username}...")
+      with lz4.frame.open(backup_file, "wb") as lz4_file:
+        with tarfile.open(fileobj=lz4_file, mode="w") as tar:
+          tar.add(user_home / "Maildir", arcname="Maildir")
 
       # Chown backup file
       logger.info(f"Change ownership of {backup_file} to {BACKUP_OWNER}:{BACKUP_GROUP}...")
