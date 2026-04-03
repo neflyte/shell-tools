@@ -14,7 +14,7 @@ Set-Alias gbr Get-GitBranch
 Set-Alias gco Set-GitBranch
 Set-Alias grs Reset-GitBranch
 <# Shell commands #>
-Set-Alias ll Get-ChildItem
+Set-Alias ll Get-ChildItemLong
 Remove-Alias ls -Force -ErrorAction SilentlyContinue
 Set-Alias ls Get-ChildItemWide
 Set-Alias which Get-Command

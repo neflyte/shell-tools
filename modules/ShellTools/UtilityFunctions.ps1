@@ -62,8 +62,18 @@ function Remove-DirectoryWithRecurseForce {
     }
 }
 
-Function Get-ChildItemWide {
-    Get-ChildItem $args | Format-Wide -AutoSize
+function Get-ChildItemWide {
+    param(
+        [Parameter(Position=0)][string]$Directory = $PWD
+    )
+    Get-ChildItem $Directory -Attributes Normal,Directory,Hidden | Format-Wide -AutoSize
+}
+
+function Get-ChildItemLong {
+    param(
+        [Parameter(Position=0)][string]$Directory = $PWD
+    )
+    Get-ChildItem $Directory -Attributes Normal,Directory,Hidden | Format-Table -AutoSize -Wrap
 }
 
 function Invoke-ConsoleTextEditor {
@@ -231,7 +241,7 @@ function Start-VSDevShell {
 }
 
 Export-ModuleMember -Function @(
-    'Find-DirectoryFromParent','Remove-DirectoryWithRecurseForce','Get-ChildItemWide',
+    'Find-DirectoryFromParent','Remove-DirectoryWithRecurseForce','Get-ChildItemWide', 'Get-ChildItemLong',
     'Invoke-ConsoleTextEditor','Invoke-GraphicalTextEditor','Invoke-Docker','Invoke-DockerCompose',
     'Invoke-Timetracker','Invoke-NuGet','Get-LastWeekTimesheet','Update-SvnRepo',
     'New-DirectoryAndSetLocation','Set-DockerContext','Build-JabbaPs1', 'Start-VSDevShell'
