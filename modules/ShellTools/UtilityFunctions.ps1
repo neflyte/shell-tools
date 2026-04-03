@@ -13,32 +13,28 @@ function Find-DirectoryFromParent {
     [CmdletBinding()]
     [OutputType([System.IO.DirectoryInfo])]
     param(
-        [Parameter(Position=0)][String]$Start = "$PWD",
+        [Parameter(Position=0)][String]$Start = "${PWD}",
         [Parameter(Mandatory)][String]$Directory
     )
     Write-Debug "Start=${Start}, Directory=${Directory}"
-    $startingDir = $PWD
-    try {
-        $currentDir = Get-Item $Start
-        while ($null -ne $currentDir) {
-            Write-Debug "PS> Set-Location ${currentDir}"
-            Set-Location $currentDir
-            Write-Debug "PS> Get-ChildItem -Attribute 'Directory','Hidden' -Filter ${Directory} -ErrorAction SilentlyContinue"
-            $desiredDir = Get-ChildItem -Attribute 'Directory','Hidden' -Filter $Directory -ErrorAction SilentlyContinue
-            if (-not($?)) {
-                return $null
-            }
-            if ($null -ne $desiredDir) {
-                Write-Debug "found directory at $($desiredDir.FullName)"
-                return $desiredDir
-            }
-            $currentDir = $currentDir.Parent
+    Write-Debug "PS> Get-Item ${Start} -ErrorAction SilentlyContinue"
+    $currentDir = Get-Item $Start -ErrorAction SilentlyContinue
+    while ($null -ne $currentDir) {
+        Write-Debug "PS> Get-ChildItem ${currentDir} -Attribute Directory,Hidden -Filter ${Directory} -ErrorAction SilentlyContinue"
+        $desiredDir = Get-ChildItem ${currentDir} -Attribute Directory,Hidden -Filter $Directory -ErrorAction SilentlyContinue
+        if (-not($?)) {
+            $err = $Error[0]
+            Write-Error "error getting items in ${currentDir}: ${err}"
+            return $null
         }
-        Write-Error "could not find directory ${Directory} in parent path hierarchy from ${Start}"
-        return $null
-    } finally {
-        Set-Location $startingDir
+        if ($null -ne $desiredDir) {
+            Write-Verbose "found directory at $($desiredDir.FullName)"
+            return $desiredDir
+        }
+        $currentDir = $currentDir.Parent
     }
+    Write-Error "could not find directory ${Directory} in parent path hierarchy from ${Start}"
+    return $null
 }
 
 function Remove-DirectoryWithRecurseForce {
@@ -49,15 +45,20 @@ function Remove-DirectoryWithRecurseForce {
     )
     foreach ($dir in $Directory) {
         $directoryLocation = Get-Item -Path $dir -ErrorAction SilentlyContinue
-        if (-not($?)) {
-            Write-Error "invalid directory ${dir}"
+        if (-not($?) -or $null -eq $directoryLocation) {
+            $err = $Error[0]
+            Write-Error "invalid directory ${dir}: ${err}"
             continue
         }
-        $directoryLoc = $directoryLocation.FullName
-        Write-Debug "directory: ${directoryLoc}"
-        if ($PSCmdlet.ShouldProcess($directoryLoc)) {
-            Remove-Item -Path $directoryLoc -Recurse -Force
-            Write-Debug "removed directory ${directoryLoc}"
+        Write-Debug "directory: $($directoryLocation.FullName)"
+        if ($PSCmdlet.ShouldProcess($directoryLocation.FullName)) {
+            Remove-Item -Path $directoryLocation.FullName -Recurse -Force -ErrorAction SilentlyContinue
+            if (-not($?)) {
+                $err = $Error[0]
+                Write-Error "failed to remove directory $($directoryLocation.FullName): ${err}"
+                continue
+            }
+            Write-Debug "removed directory $($directoryLocation.FullName)"
         }
     }
 }
