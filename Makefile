@@ -1,7 +1,7 @@
 #
 # tools makefile
 #
-.PHONY: lint update install
+.PHONY: lint update install apps cleanapps
 
 uname := $(shell uname)
 
@@ -15,9 +15,6 @@ ifeq (Linux,$(uname))
 endif
 
 update:
-	@if [[ -d .svn ]]; then \
-  		svn update; \
-  	fi
 	@if [[ -d .git ]]; then \
   		git pull; \
   	fi
@@ -27,3 +24,9 @@ update:
 
 install:
 	[[ -r install.bash ]] && { bash install.bash prompt || true; }
+
+apps:
+	cd apps/wtselect && CGO_ENABLED=0 go build -v
+
+cleanapps:
+	cd apps/wtselect && go clean

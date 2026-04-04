@@ -2,6 +2,11 @@
 #
 # JetBrains preferences
 .idea/
+# Python venv
+.venv/
 # libgit2 libraries
 git2-*
 LibGit2Sharp.*
+# apps
+apps/wtselect/wtselect
+apps/wtselect/wtselect.exe
