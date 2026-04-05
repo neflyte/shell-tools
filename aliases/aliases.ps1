@@ -13,6 +13,7 @@ Set-Alias gt Get-GitTags
 Set-Alias gbr Get-GitBranch
 Set-Alias gco Set-GitBranch
 Set-Alias grs Reset-GitBranch
+Set-Alias cdwt Set-LocationToGitWorktree
 <# Shell commands #>
 Set-Alias ll Get-ChildItemLong
 Remove-Alias ls -Force -ErrorAction SilentlyContinue

@@ -1,3 +1,5 @@
+using namespace System.Net.Sockets
+
 <#
 .SYNOPSIS
     Given a starting directory and a desired directory name, find the desired directory by
@@ -241,9 +243,76 @@ function Start-VSDevShell {
     Enter-VsDevShell c31061fe -SkipAutomaticLocation -DevCmdArguments "-arch=x64 -host_arch=x64"
 }
 
+function Invoke-JinjanateNamedPipe {
+    [OutputType([string])]
+    param(
+        [Parameter(Mandatory,Position=0)][string]$Pipe,
+        [Parameter(Mandatory)][string]$TemplateFile,
+        [Parameter(Mandatory)][string]$Data,
+        [string]$FormatName,
+        [string]$OutputFile
+    )
+    if (-not (Test-Path $Pipe)) {
+        Write-Error "Named pipe file ${Pipe} does not exist"
+        return
+    }
+    $request = @{
+        jsonrpc = '2.0'
+        method = 'jinjanate'
+        template = $TemplateFile
+        data = $Data
+        options = @{}
+    }
+    if (-not([string]::IsNullOrEmpty($FormatName))) {
+        $request.options.format = $FormatName
+    }
+    if (-not ([string]::IsNullOrEmpty($OutputFile))) {
+        $request.options['output-file'] = $OutputFile
+    }
+    $requestJson =  ConvertTo-Json $request -Compress
+    $rpcRequest = "${requestJson}`n"
+    Write-Debug "request = ${requestJson}"
+    $requestBytes = [System.Text.Encoding]::UTF8.GetBytes($rpcRequest)
+
+    # connect to socket
+    $socket = [Socket]::new([AddressFamily]::Unix, [SocketType]::Stream, [ProtocolType]::Unspecified)
+    $socket.Connect([UnixDomainSocketEndPoint]::new($Pipe))
+    $socketStream = [NetworkStream]::new($socket)
+    if (-not ($socketStream.CanWrite)) {
+        Write-Error 'Socket stream is not writable'
+        return
+    }
+
+    # send request
+    Write-Host 'send request'
+    $socketStream.Write($requestBytes, 0, $requestBytes.Length)
+
+    # receive response
+    $buf = [byte[]]::new(1024)
+    $sb = [System.Text.StringBuilder]::new()
+    Write-Host 'receive response'
+    while ($true) {
+        Write-Debug "receive up to $($buf.Length) bytes"
+        $bytesRead = $socketStream.Read($buf, 0, $buf.Length)
+        Write-Debug "received ${bytesRead} bytes"
+        if ($bytesRead -eq 0) {
+            Write-Debug 'end-of-stream reached'
+            break
+        }
+        $null = $sb.Append([System.Text.Encoding]::UTF8.GetString($buf, 0, $bytesRead))
+    }
+    $response = $sb.ToString()
+    Write-Host "response = ${response}"
+
+    # close socket
+    $socketStream.Dispose()
+    $socket.Dispose()
+}
+
 Export-ModuleMember -Function @(
     'Find-DirectoryFromParent','Remove-DirectoryWithRecurseForce','Get-ChildItemWide', 'Get-ChildItemLong',
     'Invoke-ConsoleTextEditor','Invoke-GraphicalTextEditor','Invoke-Docker','Invoke-DockerCompose',
     'Invoke-Timetracker','Invoke-NuGet','Get-LastWeekTimesheet','Update-SvnRepo',
-    'New-DirectoryAndSetLocation','Set-DockerContext','Build-JabbaPs1', 'Start-VSDevShell'
+    'New-DirectoryAndSetLocation','Set-DockerContext','Build-JabbaPs1', 'Start-VSDevShell',
+    'Invoke-JinjanateNamedPipe'
 )
