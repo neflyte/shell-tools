@@ -55,7 +55,7 @@ function Test-GitRepo {
         [Parameter(Position=0)][String]$Directory = $PWD
     )
     $repoDir = Find-DirectoryFromParent -Start $Directory -Directory '.git' -ErrorAction SilentlyContinue
-    if (-not($?) -or [string]::IsNullOrEmpty($repoDir)) {
+    if (-not($?) -or $null -eq $repoDir) {
         return $false
     }
     return $true
@@ -85,12 +85,12 @@ function Set-LocationToGitWorktree {
             Write-Error "wtselect failed with exit code ${LASTEXITCODE}"
             return
         }
-        $desiredDir = (Get-Content $tempFile -Raw).Trim()
+        $desiredDir = Get-Content $tempFile -Raw -ErrorAction SilentlyContinue
         if ([string]::IsNullOrEmpty($desiredDir)) {
             Write-Verbose 'no directory selected; nothing to do'
             return
         }
-        Set-Location $desiredDir
+        Set-Location $desiredDir.Trim()
     } finally {
         Remove-Item $tempFile -Force -ErrorAction SilentlyContinue
     }

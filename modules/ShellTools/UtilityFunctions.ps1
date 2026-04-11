@@ -84,13 +84,12 @@ function Invoke-ConsoleTextEditor {
     if ($IsLinux) {
         $editor = 'vim'
     }
-    if ($env:EDITOR -ne '') {
+    if (-not([string]::IsNullOrEmpty($env:EDITOR))) {
         $editor = $env:EDITOR
     }
     if ([string]::IsNullOrEmpty($editor)) {
         throw 'could not determine an editor to run'
     }
-    # & "${editor}" $args
     Start-Process -FilePath $editor -ArgumentList $args -NoNewWindow -Wait
 }
 
@@ -99,7 +98,7 @@ function Invoke-GraphicalTextEditor {
     if ($IsLinux) {
         $editor = 'gvim'
     }
-    if ($env:VISUAL -ne '') {
+    if (-not([string]::IsNullOrEmpty($env:VISUAL))) {
         $editor = $env:VISUAL
     }
     if ([string]::IsNullOrEmpty($editor)) {

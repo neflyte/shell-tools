@@ -1,3 +1,5 @@
+<# PowerShell prompt based on and ported from `bash-powerline` #>
+
 $POWERLINE_GIT = 1    # git branch + status
 $POWERLINE_SVN = 1    # svn revision + status
 $POWERLINE_TT = 0     # timetracker status
@@ -37,12 +39,10 @@ function Get-PowerlineSymbol {
     # Windows
     $identity = [Security.Principal.WindowsIdentity]::GetCurrent()
     $principal = [Security.Principal.WindowsPrincipal] $identity
-    $adminRole = [Security.Principal.WindowsBuiltInRole]::Administrator
-    $symbol = $SYMBOL_WINDOWS
-    if ($principal.IsInRole($adminRole)) {
-        $symbol = $SYMBOL_PRIVILEGED
+    if ($principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
+       return $SYMBOL_PRIVILEGED
     }
-    return $symbol
+    return $SYMBOL_WINDOWS
 }
 
 function Get-GitInfo {
@@ -53,7 +53,7 @@ function Get-GitInfo {
         Write-Debug 'git disabled'
         return ''
     }
-    if ($null -eq $(Find-DirectoryFromParent -Directory .git)) {
+    if ($null -eq $(Find-DirectoryFromParent -Directory '.git' -ErrorAction SilentlyContinue)) {
         Write-Debug 'no git repo in this directory'
         return ''
     }
@@ -63,7 +63,7 @@ function Get-GitInfo {
     }
     # get current branch name
     $ref = git symbolic-ref --short HEAD
-    if ($LASTEXITCODE -eq 0 -and $ref -ne '') {
+    if ($LASTEXITCODE -eq 0 -and -not([string]::IsNullOrEmpty($ref))) {
         # prepend branch symbol
         $ref = $SYMBOL_GIT_BRANCH + $ref
     } else {
@@ -73,7 +73,7 @@ function Get-GitInfo {
             $ref = ''
         }
     }
-    if ($ref -eq '') {
+    if ([string]::IsNullOrEmpty($ref)) {
         return '' # not a git repo
     }
     $marks = ''
@@ -105,7 +105,7 @@ function Get-SvnInfo {
         Write-Debug 'svn disabled'
         return ''
     }
-    if ($null -eq $(Find-DirectoryFromParent -Directory '.svn')) {
+    if ($null -eq $(Find-DirectoryFromParent -Directory '.svn' -ErrorAction SilentlyContinue)) {
         Write-Debug 'no svn repo in this directory'
         return ''
     }
@@ -113,35 +113,35 @@ function Get-SvnInfo {
         Write-Debug 'did not find svn command'
         return ''
     }
-    $svnInfo = ''
     $relativeUrl = svn info --show-item relative-url
-    if ($LASTEXITCODE -eq 0 -and $relativeUrl -ne '') {
-        Write-Debug "relativeUrl=${relativeUrl}"
-        $svnInfo += $relativeUrl
-        $rev = svn info --show-item revision
-        if ($LASTEXITCODE -eq 0 -and $rev -ne '') {
-            Write-Debug "rev=${rev}"
-            $svnInfo += "@${rev}"
+    if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrEmpty($relativeUrl)) {
+        return ''
+    }
+    Write-Debug "relativeUrl=${relativeUrl}"
+    $svnInfo = $relativeUrl
+    $rev = svn info --show-item revision
+    if ($LASTEXITCODE -eq 0 -and -not([string]::IsNullOrEmpty($rev))) {
+        Write-Debug "rev=${rev}"
+        $svnInfo += "@${rev}"
+    }
+    # look for changes
+    $changeCtr = 0
+    $svnStatus = svn status -q
+    if ($LASTEXITCODE -eq 0 -and -not([string]::IsNullOrEmpty($svnStatus))) {
+        Write-Debug "svnStatus=${svnStatus}"
+        foreach ($line in $svnStatus) {
+            $trimmed = $line.Trim()
+            Write-Debug "trimmed=${trimmed}"
+            if ($trimmed.Length -eq 0) {
+                continue
+            }
+            Write-Debug "trimmed[0]=$($trimmed[0])"
+            if ($trimmed[0] -in 'A', 'C', 'D', 'M', 'R') {
+                $changeCtr++
+            }
         }
-        # look for changes
-        $changeCtr = 0
-        $svnStatus = svn status -q
-        if ($LASTEXITCODE -eq 0) {
-            Write-Debug "svnStatus=${svnStatus}"
-            foreach ($line in $svnStatus) {
-                $trimmed = $line.Trim()
-                Write-Debug "trimmed=${trimmed}"
-                if ($trimmed.Length -eq 0) {
-                    continue
-                }
-                Write-Debug "trimmed[0]=$($trimmed[0])"
-                if ($trimmed[0] -in 'A', 'C', 'D', 'M', 'R') {
-                    $changeCtr++
-                }
-            }
-            if ($changeCtr -gt 0) {
-                $svnInfo += " ${SYMBOL_GIT_MODIFIED}${changeCtr}"
-            }
+        if ($changeCtr -gt 0) {
+            $svnInfo += " ${SYMBOL_GIT_MODIFIED}${changeCtr}"
         }
     }
     return $svnInfo
@@ -173,8 +173,7 @@ function Get-DockerContext {
         return '' # docker not found
     }
     $dockerContext = docker context show
-    if (-not($?) -or [string]::IsNullOrEmpty($dockerContext))
-    {
+    if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrEmpty($dockerContext)) {
         return ''
     }
     return $dockerContext
