@@ -235,10 +235,17 @@ function jabba
 }
 
 function Start-VSDevShell {
+    param(
+        [switch]$Use2022
+    )
     if (-not($IsWindows)) {
         return
     }
-    Import-Module "C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\Common7\Tools\Microsoft.VisualStudio.DevShell.dll"
+    $version = '18'
+    if ($Use2022) {
+        $version = '2022'
+    }
+    Import-Module "C:\Program Files (x86)\Microsoft Visual Studio\${version}\BuildTools\Common7\Tools\Microsoft.VisualStudio.DevShell.dll"
     Enter-VsDevShell c31061fe -SkipAutomaticLocation -DevCmdArguments "-arch=x64 -host_arch=x64"
 }
 
