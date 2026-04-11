@@ -40,8 +40,8 @@ func getWorktrees(fs afero.Fs, dir string) []huh.Option[string] {
 			continue
 		}
 		gitdirFile := path.Join(worktreeDir, dirEntries[idx].Name(), "gitdir")
-		gitdirContent, err := afero.ReadFile(fs, gitdirFile)
-		if err != nil {
+		gitdirContent, contentErr := afero.ReadFile(fs, gitdirFile)
+		if contentErr != nil {
 			continue
 		}
 		options = append(options, huh.NewOption(dirEntries[idx].Name(), path.Dir(string(gitdirContent))))
