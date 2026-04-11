@@ -67,16 +67,16 @@ function Remove-DirectoryWithRecurseForce {
 
 function Get-ChildItemWide {
     param(
-        [Parameter(Position=0)][string]$Directory = $PWD
+        [Parameter(Position=0)][string]$Directory = "$PWD"
     )
-    Get-ChildItem $Directory -Attributes Normal,Directory,Hidden | Format-Wide -AutoSize
+    Get-ChildItem -Path @($Directory) -Attributes '!System','Directory+Hidden' | Format-Wide -AutoSize
 }
 
 function Get-ChildItemLong {
     param(
-        [Parameter(Position=0)][string]$Directory = $PWD
+        [Parameter(Position=0)][string]$Directory = "$PWD"
     )
-    Get-ChildItem $Directory -Attributes Normal,Directory,Hidden | Format-Table -AutoSize -Wrap
+    Get-ChildItem -Path @($Directory) -Attributes '!System','Directory+Hidden' | Format-Table -AutoSize -Wrap
 }
 
 function Invoke-ConsoleTextEditor {
@@ -258,15 +258,19 @@ function Invoke-JinjanateNamedPipe {
     $request = @{
         jsonrpc = '2.0'
         method = 'jinjanate'
-        template = $TemplateFile
-        data = $Data
-        options = @{}
+        params = @{
+            args = @{
+                template = $TemplateFile
+                data = $Data
+                options = @{}
+            }
+        }
     }
     if (-not([string]::IsNullOrEmpty($FormatName))) {
-        $request.options.format = $FormatName
+        $request.params.args.options.format = $FormatName
     }
     if (-not ([string]::IsNullOrEmpty($OutputFile))) {
-        $request.options['output-file'] = $OutputFile
+        $request.params.args.options['output-file'] = $OutputFile
     }
     $requestJson =  ConvertTo-Json $request -Compress
     $rpcRequest = "${requestJson}`n"
