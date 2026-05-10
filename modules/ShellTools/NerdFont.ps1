@@ -1,21 +1,25 @@
 function Build-NerdFonts {
     [CmdletBinding()]
+    [OutputType([void])]
     param(
         [Parameter(Mandatory)][String]$InputDirectory,
         [Parameter(Mandatory)][String]$OutputDirectory,
         [int]$ParallelProcesses = 4,
-        [switch]$Dry
+        [switch]$Dry,
+        [switch]$NoItalic,
+        [switch]$Mono
     )
-
     # Check if fontforge is available
     $fontforgeCmd = Get-Command fontforge -ErrorAction SilentlyContinue
     if (-not $fontforgeCmd) {
-        throw "fontforge command not found. Please ensure FontForge is installed and available in PATH."
+        Write-Error 'fontforge command not found. Please ensure FontForge is installed and available in PATH.'
+        return
     }
 
     # Validate input directory exists
     if (-not (Test-Path $InputDirectory)) {
-        throw "Input directory '${InputDirectory}' does not exist."
+        Write-Error "Input directory '${InputDirectory}' does not exist."
+        return
     }
 
     # Search for font files (non-recursive)
@@ -24,7 +28,8 @@ function Build-NerdFonts {
     }
 
     if ($fontFiles.Count -eq 0) {
-        throw "No font files (.ttf, .ttc, or .otf) found in '${InputDirectory}'."
+        Write-Error "No font files (.ttf, .ttc, or .otf) found in '${InputDirectory}'."
+        return
     }
 
     Write-Output "Found $($fontFiles.Count) font file(s) to process."
@@ -46,12 +51,11 @@ function Build-NerdFonts {
         $name = $file.Name
         $errorLog = Join-Path $outputDir "${name}.error.log"
 
-        if (-not (Test-Path $errorLog))
-        {
+        if (-not (Test-Path $errorLog)) {
             $null = New-Item -ItemType File -Path $errorLog -Force
         }
 
-        Write-Output "Processing: ${name}"
+        Write-Output ">> Processing: ${name}"
 
         # Construct fontforge arguments
         $fontforgeArgs = @(
@@ -70,13 +74,23 @@ function Build-NerdFonts {
         if ($isDry) {
             $fontforgeArgs += '--dry'
         }
+        if ($NoItalic) {
+            $fontforgeArgs += '--has-no-italic'
+        }
+        if ($Mono) {
+            $fontforgeArgs += '--mono'
+        }
 
         $fontforgeArgs += $fullName
 
         # Execute fontforge command
-        Write-Output "PS> fontforge ${fontforgeArgs} 2>${errorLog}"
+        Write-Verbose "PS> fontforge ${fontforgeArgs} 2>${errorLog}"
         try {
             fontforge $fontforgeArgs 2>$errorLog
+            if ($LASTEXITCODE -ne 0) {
+                Write-Error "FontForge command failed for ${name}: Exit code ${LASTEXITCODE}"
+                return
+            }
             Write-Output "Completed: ${name}"
         } catch {
             Write-Error "Error processing ${name}: $_"
