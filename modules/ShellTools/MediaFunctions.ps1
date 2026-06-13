@@ -14,7 +14,7 @@ function Get-MediaDump {
     yt-dlp --no-playlist --embed-metadata --embed-thumbnail --write-thumbnail --all-formats --add-metadata --no-overwrites -o '%(id)s_%(format)s.%(ext)s' $args
 }
 
-function Convert-FlacToAlac {
+function ConvertTo-Alac {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory,Position=0)][String]$InFile,
@@ -62,4 +62,4 @@ function Convert-FlacToAlac {
     }
 }
 
-Export-ModuleMember -Function Get-WebVideo,Get-WebAudio,Get-WebAudioPlaylist,Get-MediaDump,Convert-FlacToAlac
+Export-ModuleMember -Function Get-WebVideo,Get-WebAudio,Get-WebAudioPlaylist,Get-MediaDump,ConvertTo-Alac
