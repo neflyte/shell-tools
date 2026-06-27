@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 import subprocess
-import tarfile
 import datetime
 import sys
 import logging
 import lz4.frame
 import bz2
 from pathlib import Path
+from tarfile import TarFile, TarInfo
 from typing import Final
 
 # Configuration
@@ -47,13 +47,19 @@ def backup_config_files() -> bool:
     try:
         logger.info(f"Back up /etc and /usr/local/etc to {str(backup_file)}...")
         with lz4.frame.open(backup_file, "wb") as lz4_file:
-            with tarfile.open(fileobj=lz4_file, mode="w") as tar:
+            with TarFile.open(fileobj=lz4_file, mode="w") as tar:
                 tar.add("/etc", arcname="etc")
                 tar.add("/usr/local/etc", arcname="usr-local-etc")
         return True
     except Exception as e:
         logger.error(f"Backup of /etc and /usr/local/etc failed: {e}")
         return False
+
+
+def filter_backup_var_db(x: TarInfo) -> TarInfo | None:
+    if x.name == "var/db/freebsd-update":
+        return None
+    return x
 
 
 def backup_var_db() -> bool:
@@ -64,8 +70,8 @@ def backup_var_db() -> bool:
     try:
         logger.info(f"Back up /var/db to {str(backup_file)}...")
         with lz4.frame.open(backup_file, "wb") as lz4_file:
-            with tarfile.open(fileobj=lz4_file, mode="w") as tar:
-                tar.add("/var/db", arcname="var-db")
+            with TarFile.open(fileobj=lz4_file, mode="w") as tar:
+                tar.add("/var/db", arcname="var-db", filter=filter_backup_var_db)
         return True
     except Exception as e:
         logger.error(f"Backup of /var/db failed: {e}")
