@@ -57,7 +57,7 @@ def backup_config_files() -> bool:
 
 
 def filter_backup_var_db(x: TarInfo) -> TarInfo | None:
-    if x.name == "var/db/freebsd-update":
+    if x.name == "var-db/freebsd-update":
         return None
     return x
 
