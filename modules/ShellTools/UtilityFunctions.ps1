@@ -163,6 +163,17 @@ Function Update-SvnRepo {
     svn update
 }
 
+function Create-SvnRepo {
+    param([Parameter(Mandatory)][string]$Name)
+    $repoUrl = 'svn://leela.ethereal.cc'
+    Write-Host "Create repo '${Name}'"
+    svn mkdir "${repoUrl}/${Name}" -m "create repo root '${Name}'"
+    svn mkdir "${repoUrl}/${Name}/trunk" -m "create repo trunk '${Name}/trunk'"
+    svn mkdir "${repoUrl}/${Name}/branches" -m "create repo branches '${Name}/branches'"
+    svn mkdir "${repoUrl}/${Name}/tags" -m "create repo tags '${Name}/tags'"
+    Write-Host 'done.'
+}
+
 function New-DirectoryAndSetLocation {
     param(
         [Parameter(Mandatory,Position=0)][string]$Path
@@ -322,7 +333,7 @@ function Invoke-JinjanateNamedPipe {
 Export-ModuleMember -Function @(
     'Find-DirectoryFromParent','Remove-DirectoryWithRecurseForce','Get-ChildItemWide', 'Get-ChildItemLong',
     'Invoke-ConsoleTextEditor','Invoke-GraphicalTextEditor','Invoke-Docker','Invoke-DockerCompose',
-    'Invoke-Timetracker','Invoke-NuGet','Get-LastWeekTimesheet','Update-SvnRepo',
+    'Invoke-Timetracker','Invoke-NuGet','Get-LastWeekTimesheet','Update-SvnRepo', 'Create-SvnRepo',
     'New-DirectoryAndSetLocation','Set-DockerContext','Build-JabbaPs1', 'Start-VSDevShell',
     'Invoke-JinjanateNamedPipe'
 )

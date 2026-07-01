@@ -63,7 +63,7 @@ function Build-NerdFonts {
             'font-patcher',
             '--complete',
             '--makegroups',
-            '5',
+            '6',
             '--outputdir',
             $outputDir,
             '--quiet',
