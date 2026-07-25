@@ -2,7 +2,7 @@ if (-not(Get-ChildItem variable:ShellToolsPredefinedLocations -ErrorAction Ignor
     $locations = [PSCustomObject]@{
         srchome = Join-Path $HOME 'src'
     }
-    $configFile = Join-Path $HOME '.config' 'ShellTools' 'locations.json'
+    $configFile = Join-Path (Join-Path (Join-Path $HOME '.config') 'ShellTools') 'locations.json'
     if (Test-Path $configFile) {
         Write-Verbose "Load predefined locations from ${configFile}"
         $locations = Get-Content $configFile -Raw | ConvertFrom-Json

@@ -1,4 +1,4 @@
-function Build-NerdFonts {
+function Invoke-BuildNerdFonts {
     [CmdletBinding()]
     [OutputType([void])]
     param(
@@ -113,4 +113,4 @@ function Build-NerdFonts {
     Write-Output "All font files have been processed. Output directory: ${OutputDirectory}"
 }
 
-Export-ModuleMember -Function Build-NerdFonts
+Export-ModuleMember -Function Invoke-BuildNerdFonts

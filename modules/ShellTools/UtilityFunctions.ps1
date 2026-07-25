@@ -163,7 +163,7 @@ Function Update-SvnRepo {
     svn update
 }
 
-function Create-SvnRepo {
+function New-SvnRepo {
     param([Parameter(Mandatory)][string]$Name)
     $repoUrl = 'svn://leela.ethereal.cc'
     Write-Host "Create repo '${Name}'"
@@ -207,7 +207,7 @@ function Set-DockerContext {
     docker context use "${Context}"
 }
 
-function Build-JabbaPs1 {
+function Set-JabbaPs1 {
     param(
         [Parameter(Mandatory)][string]$JabbaHome
     )
@@ -333,7 +333,7 @@ function Invoke-JinjanateNamedPipe {
 Export-ModuleMember -Function @(
     'Find-DirectoryFromParent','Remove-DirectoryWithRecurseForce','Get-ChildItemWide', 'Get-ChildItemLong',
     'Invoke-ConsoleTextEditor','Invoke-GraphicalTextEditor','Invoke-Docker','Invoke-DockerCompose',
-    'Invoke-Timetracker','Invoke-NuGet','Get-LastWeekTimesheet','Update-SvnRepo', 'Create-SvnRepo',
-    'New-DirectoryAndSetLocation','Set-DockerContext','Build-JabbaPs1', 'Start-VSDevShell',
+    'Invoke-Timetracker','Invoke-NuGet','Get-LastWeekTimesheet','Update-SvnRepo', 'New-SvnRepo',
+    'New-DirectoryAndSetLocation','Set-DockerContext','Set-JabbaPs1', 'Start-VSDevShell',
     'Invoke-JinjanateNamedPipe'
 )

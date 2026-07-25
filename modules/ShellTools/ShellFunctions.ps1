@@ -1,4 +1,4 @@
-function Build-PredefinedLocationFunctions {
+function Set-PredefinedLocationFunctions {
     param()
     $locationAliases = $ShellToolsPredefinedLocations | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name
     foreach ($locationAlias in $locationAliases) {
@@ -15,7 +15,7 @@ function Clear-PredefinedLocationFunctions {
     Get-ChildItem -Path Function:\ | Where-Object Name -Like 'Set-PredefinedLocationTo*' | Remove-Item -Force
 }
 
-function Build-PredefinedLocationAliases {
+function Set-PredefinedLocationAliases {
     param()
     $locationAliases = $ShellToolsPredefinedLocations | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name
     foreach ($locationAlias in $locationAliases) {
@@ -43,8 +43,8 @@ function Set-PredefinedLocation {
 
 Export-ModuleMember -Function @(
     'Set-PredefinedLocation',
-    'Build-PredefinedLocationFunctions',
+    'Set-PredefinedLocationFunctions',
     'Clear-PredefinedLocationFunctions',
-    'Build-PredefinedLocationAliases',
+    'Set-PredefinedLocationAliases',
     'Clear-PredefinedLocationAliases'
 )

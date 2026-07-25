@@ -4,8 +4,11 @@
 <# Subversion #>
 Set-Alias sup Update-SvnRepo
 <# Git #>
-Remove-Alias gp -Force -ErrorAction SilentlyContinue
-Set-Alias gp Update-GitRepo
+if ($PSVersionTable.PSVersion.Major -gt 5)
+{
+    Remove-Alias gp -Force -ErrorAction SilentlyContinue
+    Set-Alias gp Update-GitRepo
+}
 Set-Alias gfo Update-GitOriginRepo
 Set-Alias gb Get-GitBranches
 Set-Alias gs Get-GitRepoStatus
@@ -16,8 +19,11 @@ Set-Alias grs Reset-GitBranch
 Set-Alias cdwt Set-LocationToGitWorktree
 <# Shell commands #>
 Set-Alias ll Get-ChildItemLong
-Remove-Alias ls -Force -ErrorAction SilentlyContinue
-Set-Alias ls Get-ChildItemWide
+if ($PSVersionTable.PSVersion.Major -gt 5)
+{
+    Remove-Alias ls -Force -ErrorAction SilentlyContinue
+    Set-Alias ls Get-ChildItemWide
+}
 Set-Alias which Get-Command
 Set-Alias rimraf Remove-DirectoryWithRecurseForce
 Set-Alias mdcd New-DirectoryAndSetLocation
