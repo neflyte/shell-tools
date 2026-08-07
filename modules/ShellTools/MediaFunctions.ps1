@@ -62,4 +62,41 @@ function ConvertTo-Alac {
     }
 }
 
-Export-ModuleMember -Function Get-WebVideo,Get-WebAudio,Get-WebAudioPlaylist,Get-MediaDump,ConvertTo-Alac
+function Update-Mp3Gain {
+    param(
+        [string]$Path = $PWD,
+        [int]$ThrottleLimit = 4
+    )
+    Get-ChildItem -Path $Path -Filter *.mp3 -File -Recurse |
+        ForEach-Object -ThrottleLimit $ThrottleLimit -Parallel {
+            Write-Debug "PS> mp3gain -e -r -c -k `"$($_.FullName)`" 2>&1"
+            mp3gain -e -r -c -k "$($_.FullName)" 2>&1
+        }
+}
+
+function Update-AacGain {
+    param(
+        [string]$Path = $PWD,
+        [int]$ThrottleLimit = 4
+    )
+    Get-ChildItem -Path $Path -Filter *.m4a -File -Recurse |
+        ForEach-Object -ThrottleLimit $ThrottleLimit -Parallel {
+            Write-Debug "PS> aacgain -e -r -c -k `"$($_.FullName)`" 2>&1"
+            aacgain -e -r -c -k "$($_.FullName)" 2>&1
+        }
+}
+
+function Update-Metaflac {
+    param(
+        [string]$Path = $PWD,
+        [int]$ThrottleLimit = 4
+    )
+    Get-ChildItem -Path $Path -Filter *.flac -File -Recurse |
+        ForEach-Object -ThrottleLimit $ThrottleLimit -Parallel {
+            Write-Debug "PS> metaflac --add-replay-gain `"$($_.FullName)`" 2>&1"
+            metaflac --add-replay-gain "$($_.FullName)" 2>&1
+        }
+}
+
+Export-ModuleMember -Function Get-WebVideo,Get-WebAudio,Get-WebAudioPlaylist,Get-MediaDump, `
+    ConvertTo-Alac,Update-Mp3Gain,Update-AacGain,Update-Metaflac
