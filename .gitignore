@@ -10,3 +10,4 @@ LibGit2Sharp.*
 # apps
 apps/wtselect/wtselect
 apps/wtselect/wtselect.exe
+apps/shellexecute/shellexecute.exe

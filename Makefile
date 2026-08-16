@@ -27,6 +27,12 @@ install:
 
 apps:
 	cd apps/wtselect && CGO_ENABLED=0 go build -v
+ifeq ($(OS),Windows_NT)
+	cd apps/shellexecute && go build -v -ldflags '-s -w -H=windowsgui'
+endif
 
 cleanapps:
 	cd apps/wtselect && go clean
+ifeq ($(OS),Windows_NT)
+	cd apps/shellexecute && go clean
+endif
