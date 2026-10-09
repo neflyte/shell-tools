@@ -62,8 +62,7 @@ function Invoke-BuildNerdFonts {
             '-script',
             'font-patcher',
             '--complete',
-            '--makegroups',
-            '6',
+            <#'--makegroups', '6',#>
             '--outputdir',
             $outputDir,
             '--quiet',
